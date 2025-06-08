@@ -108,11 +108,14 @@ const captainSchema = new mongoose.Schema<ICaptain>({
 })
 
 captainSchema.methods.generateAccessToken = function(): string {
-    const payload : {_id : string , email : string , firstname : string} = 
+    const payload : {_id : string , email : string , fullname : {firstname : string , lastname : string}} = 
     {
         _id : this._id,
         email : this._id,
-        firstname : this.fullname.firstname
+        fullname : {
+            firstname : this.firstname,
+            lastname  : this.lastname
+        }
     }
     const sercret = process.env.ACCESS_TOKEN_SECRET! as jwt.Secret 
     
