@@ -56,10 +56,20 @@ userSchema.pre('save', async function(next) {
 })
 
 userSchema.methods.generateAccessToken = function(){
-    const payload : {_id : unknown , email : string , firstname : string} = {
+    const payload : 
+    {
+        _id : unknown ,
+        email : string , fullname : {
+        firstname : string,
+        lastname : string
+    }} 
+    = {
         _id : this._id,
         email : this.email,
-        firstname : this.fullname.firstname
+        fullname : {
+            firstname : this.firstname,
+            lastname : this.lastname
+        }
     }
     const secret = process.env.ACCESS_TOKEN_SECRET!
 
