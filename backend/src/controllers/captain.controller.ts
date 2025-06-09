@@ -16,7 +16,7 @@ const registerCaptain = asyncHandler(async(req : Request , res : Response )=>{
         throw new ApiError(411 , 'invalid field input' , false , errorMessage)
     }
 
-    const {otp , email , password , vehicle , fullname } = req.body;
+    const {otp , email , password , fullname } = req.body;
 
     let currentOtp = otp;
     const generatedOtp = await Otp.find({email}).sort({createdAt : -1}).limit(1)
@@ -38,12 +38,7 @@ const registerCaptain = asyncHandler(async(req : Request , res : Response )=>{
             firstname : fullname.firstname,
             lastname : fullname.lastname
         },
-        vehicle : {
-            color : vehicle.color,
-            NumberPlate : vehicle.NumberPlate,
-            capacity : vehicle.capacity,
-            vehicleType : vehicle.vehicleType
-        },
+      
         password : password
     })
 
@@ -121,4 +116,32 @@ const logout = asyncHandler(async(req : Request , res : Response)=>{
     )
 })
 
-export {registerCaptain , loginCaptain , logout , getCaptainProfile}
+const completeProfile = asyncHandler(async(req : Request , res : Response)=>{
+    const errors : Result = validationResult(req)
+
+    if(!errors.isEmpty()){
+        const errorMessage : string[] = errors.array()
+        throw new ApiError(401 , 'invalid fields' , false , errorMessage)
+    }
+
+    const {color , NumberPlate , capacity , vehicleType} = req.body
+
+    const captain = await Captain.findById(req.user?._id).select("-password");
+
+    if(captain){
+        captain.vehicle.color = color,
+        captain.vehicle.NumberPlate = NumberPlate,
+        captain.vehicle.capacity = capacity,
+        captain.vehicle.vehicleType = vehicleType
+    }
+
+    await captain?.save({validateBeforeSave : false})
+
+    return res.status(200).json(
+        new ApiResponse(200 , `captain's profile created` , captain! )
+    )
+
+})
+
+
+export {registerCaptain , loginCaptain , logout , getCaptainProfile , completeProfile}

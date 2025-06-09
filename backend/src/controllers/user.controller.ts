@@ -12,7 +12,7 @@ const signup = asyncHandler(async(req : Request , res : Response)=>{
 
      if (!errors.isEmpty()) {
         const errorMessages : string[] =  errors.array()
-        throw new ApiError(400, 'invalid fields' , false , errorMessages);
+       throw new ApiError(422, 'Validation failed' , false , errorMessages);
     }
 
     const {otp , email , fullname , password} = req.body
@@ -24,13 +24,13 @@ const signup = asyncHandler(async(req : Request , res : Response)=>{
     if(!generatedOtp)
         throw new ApiError(404 , `Otp not found with ${email}` );
     if(generatedOtp[0]?.otp != currentOtp)
-        throw new ApiError(401 , 'Invalid Otp')
+        throw new ApiError(400 , 'Invalid Otp')
 
 
     const ifUserExists = await User.findOne({email : email})
 
     if(ifUserExists){
-        throw new ApiError(400 , 'User already exists')
+        throw new ApiError(409 , 'User already exists')
     }
 
   
@@ -45,7 +45,7 @@ const signup = asyncHandler(async(req : Request , res : Response)=>{
     })
 
     if(!newUser){
-        throw new ApiError(401 , 'not able to create user')
+        throw new ApiError(500 , 'not able to create user')
     }
     
     const token = newUser.generateAccessToken()
@@ -66,7 +66,7 @@ const signin = asyncHandler(async(req : Request , res : Response)=>{
 
     if(!errors.isEmpty()){
         const errorMessage : string[] = errors.array();
-        throw new ApiError(400 , "invalid fields" , false , errorMessage)
+        throw new ApiError(422 , "invalid fields" , false , errorMessage)
     }
 
 
@@ -78,7 +78,7 @@ const signin = asyncHandler(async(req : Request , res : Response)=>{
         throw new ApiError(404 , 'user not found');
 
     if( !validUser.matchPassword(password as string)){
-        throw new ApiError(403 , 'Invalid Password!')
+        throw new ApiError(401 , 'Invalid credentials')
     }
 
     const accessToken = validUser.generateAccessToken()
@@ -98,7 +98,7 @@ const logout = asyncHandler(async(req : Request,res : Response)=>{
     const validUser = await User.findById(userId)
 
     if(!validUser)
-        throw new ApiError(400 , 'invalid request for logout')
+        throw new ApiError(401 , 'invalid request for logout')
     
     await BlackListedToken.create({
         token : accessToken

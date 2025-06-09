@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema<IUser>({
         },
         lastname : {
             type : String,
-            minlength : [3 , "Last name must be at least 3 characters long"]
+            default : ""
         }
     },
     email : {

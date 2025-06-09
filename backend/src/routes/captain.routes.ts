@@ -1,7 +1,8 @@
 import Router from 'express'
 import {body} from 'express-validator'
-import {registerCaptain , loginCaptain , getCaptainProfile , logout} from '../controllers/captain.controller'
+import {registerCaptain , loginCaptain , getCaptainProfile , logout , completeProfile} from '../controllers/captain.controller'
 import { captainVerify } from '../middleware/captainAuth.middleware'
+import { verifyJwt } from '../middleware/auth.midleware'
 const router = Router()
 
 router.route('/registerCaptain').post([
@@ -13,18 +14,19 @@ router.route('/registerCaptain').post([
     body('fullname.lastname').trim().isLength({min: 3}).withMessage('Last name must be at least 3 characters long'),
     
     // Vehicle validation
-    body('vehicle.color').trim().isLength({min: 3}).withMessage('Vehicle color must be at least 3 characters long'),
-    body('vehicle.NumberPlate').trim().isLength({min: 3}).withMessage('Number plate must be at least 3 characters long'),
-    body('vehicle.capacity').isInt({min: 1}).withMessage('Vehicle capacity must be at least 1'),
-    body('vehicle.vehicleType').isIn(['car', 'motorcycle', 'auto']).withMessage('Vehicle type must be car, motorcycle, or auto'),
     
-    // Location validation (optional fields)
-    body('location.ltd').optional().isFloat().withMessage('Latitude must be a valid number'),
-    body('location.lng').optional().isFloat().withMessage('Longitude must be a valid number')
 ] , registerCaptain )
 
 
-
+router.route("/profile").post([
+    body('color').trim().isLength({min: 3}).withMessage('Vehicle color must be at least 3 characters long'),
+    body('NumberPlate').trim().isLength({min: 3}).withMessage('Number plate must be at least 3 characters long'),
+    body('capacity').isInt({min: 1}).withMessage('Vehicle capacity must be at least 1'),
+    body('vehicleType').isIn(['car', 'motorcycle', 'auto']).withMessage('Vehicle type must be car, motorcycle, or auto'),
+    
+    // Location validation (optional fields)
+   
+] , verifyJwt ,  completeProfile)
 router.route('/captainLogin').post([
     body('email').trim().isEmail().withMessage('Invalid email '),
     body('password').trim().isLength({min : 6}).withMessage('invalid password length')

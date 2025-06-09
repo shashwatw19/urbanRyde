@@ -36,7 +36,7 @@ const Signin = () => {
   }
   return (
     <div className="p-7 flex flex-col justify-between  items-start min-h-screen">
-      <h1 className="text-black md:text-4xl text-4xl ">URBANRYDE</h1>
+      <h1 className="text-black md:text-4xl text-4xl ">UrbanRyde</h1>
       <form onSubmit={handleSubmit} className="md:max-w-xl md:mt-20 mx-auto w-full">
         <div className="flex flex-col mb-7 gap-2 items-start justify-between">
           <h3 className="text-lg mb-2 font-medium ">What's yout email?</h3>

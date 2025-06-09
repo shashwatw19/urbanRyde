@@ -1,15 +1,19 @@
 import { UserSignUpSchema } from "../schema/UserSchema";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { userSignUpSchema } from "../schema/UserSchema";
 import { ChangeEvent, FormEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { createOtp } from "../services/operations/user/auth";
+import { UserDataContext } from "../context/UserContext";
 const Signup = () => {
-  const [input, setInput] = useState<UserSignUpSchema>({
+  const navigate = useNavigate()
+  const [input, setInput ] = useState<UserSignUpSchema>({
     email: "",
     password: "",
     firstname: "",
     lastname: "",
   });
+  const {setUser , loading ,  setLoading} = useContext(UserDataContext)
   const [error, setErrors] = useState<Partial<UserSignUpSchema>>({});
   const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -18,7 +22,7 @@ const Signup = () => {
       [name]: value,
     });
   };
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async(e: FormEvent) => {
     e.preventDefault();
     const result = userSignUpSchema.safeParse(input);
 
@@ -27,18 +31,34 @@ const Signup = () => {
       setErrors(fieldError as Partial<UserSignUpSchema>);
       return;
     }
+    console.log("input from signun form", input);
+    // api implemetation from here
 
-    setErrors({
+    try{
+      const response = await createOtp(input.email ,  setLoading)
+      if(response){
+        setUser({
+          email : input.email,
+          password : input.password,
+          fullname : {
+            firstname : input.firstname,
+            lastname : input.lastname || ""
+          }
+        })
+        return navigate("/verify-email")
+      }
+    }catch(e){
+      console.log("error in signup component" , e)
+    }
+    finally{
+      setErrors({
       email: "",
       password: "",
       firstname : "",
       lastname : ""
     });
-
-    console.log("input from signun form", input);
-
-    // api implemetation from here
-  };
+    }
+};
   return (
     <div className="p-7 flex flex-col justify-between gap-10 items-start min-h-screen">
       <h1 className="text-black md:text-4xl text-4xl ">URBANRYDE</h1>
@@ -110,7 +130,7 @@ const Signup = () => {
           )}
         </div>
 
-        <button
+        <button disabled={loading}
           className="bg-black rounded-full font-semibold mb-7 px-4 py-2 border w-full text-white "
           type="submit"
         >
@@ -123,7 +143,7 @@ const Signup = () => {
           </Link>{" "}
         </p>
       </form>
-      <Link
+      <Link 
         to={"/captain-signup"}
         className="bg-green-600 max-w-xl mx-auto rounded-full text-center font-semibold mb-7 px-4 py-2 border w-full text-white "
       >
