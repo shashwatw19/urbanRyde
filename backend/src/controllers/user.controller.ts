@@ -71,13 +71,13 @@ const signin = asyncHandler(async(req : Request , res : Response)=>{
 
 
     const {email , password} = req.body
-    console.log(email , password)
-    const validUser = await User.findOne({email  : email}).select("-password")
+    
+    const validUser = await User.findOne({email  : email})
 
     if(!validUser)
-        throw new ApiError(404 , 'user not found');
+        throw new ApiError(404 , 'User not found');
 
-    if( !validUser.matchPassword(password as string)){
+    if( !await validUser.matchPassword(password)){
         throw new ApiError(401 , 'Invalid credentials')
     }
 
@@ -87,6 +87,8 @@ const signin = asyncHandler(async(req : Request , res : Response)=>{
         httpOnly : true,
         maxAge : 2 * 24 * 60 * 60 * 1000
     }
+
+    validUser.password = undefined
 
     return res.status(200).cookie("accessToken" , accessToken , options).json(
         new ApiResponse(200 , 'logged in success!' , validUser)
@@ -108,4 +110,9 @@ const logout = asyncHandler(async(req : Request,res : Response)=>{
         new ApiResponse(200 , 'User logged Out Successfully')
     )
 })
-export {signup , signin , logout}
+const checkAuth = asyncHandler(async(req : Request , res : Response)=>{
+        return res.status(200).json(
+            new ApiResponse(200 , 'authenticated ' , req.user)
+        )
+})
+export {signup , signin , logout , checkAuth}

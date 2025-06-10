@@ -1,5 +1,5 @@
 import { User } from "./userTypes";
-import { CaptainSignInSchema } from "../schema/CaptainSchema";
+
 type CaptainStatus = "active" | "inactive";
 
 export interface Captain extends User{
@@ -31,10 +31,4 @@ export interface SignUpCaptain extends Captain{
     otp : string
 }
 
-export type CaptainStoreType = {
-    captain : Captain | null
-    loading : boolean,
-    registerCaptain : (input : SignUpCaptain)=>Promise<boolean>
-    captainLogin : (input :CaptainSignInSchema )=>Promise<boolean>
-    logout : ()=>Promise<boolean>
-}
+

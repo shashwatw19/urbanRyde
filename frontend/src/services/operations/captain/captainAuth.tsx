@@ -13,28 +13,29 @@ export const registerCaptain = async(input : UserSignUpType , setLoading : (valu
         } )
         toast.success("account created!")
         console.log("response from signup function.." , response)
-        return true;
+        return response.data;
     }catch(e){
         if(axios.isAxiosError(e)){
             const errorMessage = e.response?.data?.message || "Something went wrong";
             toast.error(errorMessage)
             console.log("error from signup " , e)
         }
-        return false
+        return {success : false}
     }finally{
         setLoading(false)
         toast.dismiss(toastId)
     }
 }
 export const captainLogin = async(input :CaptainSignInSchema , setLoading : (value : boolean)=>void )=>{
-
+    const toastId = toast.loading("verifying credentials...")
     try{
         setLoading(true)
         const response = await apiConnector('POST' , CAPTAIN.signin , input , {
             'Content-Type' : 'application/json'
         })
         console.log("response from captainLogin" , response)
-        return true;
+        toast.success('logged in successfully')
+        return response.data
         
     }catch(e){
         if(axios.isAxiosError(e)){
@@ -42,9 +43,22 @@ export const captainLogin = async(input :CaptainSignInSchema , setLoading : (val
             toast.error(errorMessage)
             
         }
-        return false
+        return {success : false}
     }finally{
         setLoading(false)
-      
+        toast.dismiss(toastId)
     }
+}
+
+
+export const checkCaptainAuth = async()=>{
+    try{
+      const response =  await apiConnector("GET" , CAPTAIN.checkAuth , undefined , {
+        'Content-Type' : 'application/json'
+      })
+      return response.data
+    }catch(e){
+        console.log("error from checkCaptainAuth" , e)
+        return {success : false}
+    }   
 }

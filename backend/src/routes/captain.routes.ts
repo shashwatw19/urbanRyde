@@ -1,6 +1,6 @@
 import Router from 'express'
 import {body} from 'express-validator'
-import {registerCaptain , loginCaptain , getCaptainProfile , logout , completeProfile} from '../controllers/captain.controller'
+import {registerCaptain , loginCaptain , getCaptainProfile , logout , completeProfile , checkAuth} from '../controllers/captain.controller'
 import { captainVerify } from '../middleware/captainAuth.middleware'
 import { verifyJwt } from '../middleware/auth.midleware'
 const router = Router()
@@ -10,7 +10,7 @@ router.route('/registerCaptain').post([
     body('password').trim().isLength({min : 6}).withMessage('invalid password Length'),
     body('otp').notEmpty().isLength({max : 6}).withMessage('max Length of otp should be 6 digits'),
     // Fullname validation
-    body('fullname.firstname').trim().isLength({min: 3}).withMessage('First name must be at least 3 characters long'),
+    body('fullname.firstname').optional().trim().if((value) => value && value.length > 0).isLength({ min: 2 }).withMessage('Last name must be at least 2 characters if provided'),
     body('fullname.lastname').trim().isLength({min: 3}).withMessage('Last name must be at least 3 characters long'),
     
     // Vehicle validation
@@ -33,7 +33,7 @@ router.route('/captainLogin').post([
 ] , loginCaptain )
 
 router.route('/getCaptainDetails').get(captainVerify , getCaptainProfile)
-
+router.route('/checkAuth').get(captainVerify , checkAuth)
 router.route('/logoutCaptain').post(captainVerify , logout)
 
 export default router

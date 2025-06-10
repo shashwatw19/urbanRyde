@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 
-const Home = () => {
+const HeroSection = () => {
   return (
     <div>
         <div className="h-screen pt-4 bg-bottom bg-cover bg-[url(https://images.unsplash.com/photo-1674705046614-bede578a9b74?q=80&w=1976&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)] flex justify-between items-start flex-col w-full bg-red-400">
@@ -14,4 +14,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default HeroSection

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const axiosInstance = axios.create({});
+export const axiosInstance = axios.create({withCredentials : true});
 
 interface ApiConnectorParams {
     method: string;
@@ -23,5 +23,6 @@ export const apiConnector = (
         data: bodyData  ,
         headers: headers  ,
         params: params  ,
+        withCredentials : true
     });
 };

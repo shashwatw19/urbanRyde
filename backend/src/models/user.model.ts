@@ -12,7 +12,7 @@ interface IUser extends Document {
     password : string | undefined,
     socketId : string | null,
     generateAccessToken : ()=>string,
-    matchPassword : (password : string)=>boolean
+    matchPassword : (password : string)=>Promise<boolean>
 
 }
 
@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema<IUser>({
     fullname : {
         firstname : {
             type : String,
-            require : true,
+            required : true,
             minlength : [3 , "Fisrt name must be at least 3 characters long"]
         },
         lastname : {
@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema<IUser>({
     },
     password : {
         type : String,
-        require : true,
+        required : true,
         
     },
     socketId : {
@@ -59,16 +59,17 @@ userSchema.methods.generateAccessToken = function(){
     const payload : 
     {
         _id : unknown ,
-        email : string , fullname : {
-        firstname : string,
-        lastname : string
-    }} 
+        email : string , 
+        fullname : {
+            firstname : string,
+            lastname : string
+        }} 
     = {
         _id : this._id,
         email : this.email,
         fullname : {
-            firstname : this.firstname,
-            lastname : this.lastname
+            firstname : this.fullname.firstname,
+            lastname : this.fullname.lastname
         }
     }
     const secret = process.env.ACCESS_TOKEN_SECRET!
@@ -76,14 +77,13 @@ userSchema.methods.generateAccessToken = function(){
     return jwt.sign(payload , secret , {expiresIn : "1d"  })
 }
 
-userSchema.methods.hashPassword = async function (password : string){
-    return  await bcrypt.hash(password , 10)
-}
 
-userSchema.methods.matchPassword = async function( password : string){
-    if(this.password){
-        return await bcrypt.compare(password , this.password!)
+
+userSchema.methods.matchPassword = async function(password: string){
+    if (!this.password || !password) {
+        return false;
     }
+    return await bcrypt.compare(password, this.password);
 }
 
 export const User : Model<IUser> = mongoose.model<IUser>("User" , userSchema)

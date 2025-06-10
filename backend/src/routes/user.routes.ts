@@ -1,6 +1,6 @@
 import Router from 'express'
 import {body} from 'express-validator'
-import { signup , signin, logout } from '../controllers/user.controller'
+import { signup , signin, logout , checkAuth} from '../controllers/user.controller'
 import { verifyJwt } from '../middleware/auth.midleware'
 
 const router = Router()
@@ -17,6 +17,8 @@ router.route('/signin').post([
     body('password').trim().isLength({ min: 6 }).withMessage('password should not be empty'),
 
 ] , signin)
+
+router.route('/checkAuth').get(verifyJwt , checkAuth)
 
 router.route('/logout').post(verifyJwt , logout)
 

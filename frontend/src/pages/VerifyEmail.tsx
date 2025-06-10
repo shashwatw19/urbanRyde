@@ -6,10 +6,12 @@ import { ChangeEvent } from "react";
 import { toast } from "sonner";
 import { UserSignUpType } from "../types/userTypes";
 import { signup } from "../services/operations/user/auth";
+import AuthContext, { AuthDataContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 const VerifyEmail = () => {
-  const {userSignupData , setUserSignupData , loading , setLoading ,user} = useContext(UserDataContext);
-  
-  console.log("user set from context.." , user)
+  const {userSignupData , setUserSignupData , loading , setLoading ,setUser , user} = useContext(UserDataContext);
+  const {setIsAuthenticated , setUserRole} = useContext(AuthDataContext)
+  const navigate = useNavigate()
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
   const inputRef = useRef<any>([]);
   const changehandler = (value: string, index: number) => {
@@ -40,11 +42,15 @@ const VerifyEmail = () => {
     }
         
     const data: UserSignUpType = { ...user, otp: otpString }
-    console.log("final signup data" , data)
-    
     // api Implementation
     try{
         const response = await signup(data , setLoading);
+        if(response.success){
+          setIsAuthenticated(true)
+          setUserRole('user')
+          setUser(response.data)
+          navigate('/user/home')
+        }
     }catch(e){
       console.log("error in veryEmail component" , e)
     }finally{

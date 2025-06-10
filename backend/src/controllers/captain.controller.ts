@@ -29,7 +29,7 @@ const registerCaptain = asyncHandler(async(req : Request , res : Response )=>{
     const validUser = await Captain.findOne({email : email})
 
     if(validUser){
-        throw new ApiError(401 , 'user already exist')
+        throw new ApiError(401 , 'User already exist')
     }
 
     const newUser = await Captain.create({
@@ -43,7 +43,7 @@ const registerCaptain = asyncHandler(async(req : Request , res : Response )=>{
     })
 
     if(!newUser){
-        throw new ApiError(401 , 'not able to register captain')
+        throw new ApiError(401 , 'Not able to register captain')
     }
     const accessToken = newUser.generateAccessToken();
 
@@ -72,11 +72,11 @@ const loginCaptain = asyncHandler(async(req : Request , res : Response)=>{
     const validUser = await Captain.findOne({email : email})
 
     if(!validUser){
-        throw new ApiError(404 , 'user not found')
+        throw new ApiError(404 , 'User not found')
     }
 
-    if(!validUser.comparePassword(password)){
-        throw new ApiError(401 , 'invalid Password')
+    if(!await validUser.comparePassword(password)){
+        throw new ApiError(401 , 'Invalid Password')
     }
 
     const accessToken = validUser.generateAccessToken()
@@ -85,9 +85,9 @@ const loginCaptain = asyncHandler(async(req : Request , res : Response)=>{
         httpOnly : true,
         maxAge : 2 * 24 * 60 * 60 * 1000 
     }
-    validUser.password = undefined
+    validUser
     return res.status(200).cookie("accessToken" , accessToken, options).json(
-        new ApiResponse(200 , 'user logged in successfully!' , validUser)
+        new ApiResponse(200 , 'User logged in successfully!' , validUser)
     )
 })
 //getCaptainProfile
@@ -106,7 +106,7 @@ const getCaptainProfile = asyncHandler(async(req : Request , res : Response)=>{
 // logout captain
 const logout = asyncHandler(async(req : Request , res : Response)=>{
     const accessToken = req.cookies?.accessToken
-    const username = req.user?.firstname
+    const username = req.user?.fullname.firstname
     await BlackListedToken.create({
         token : accessToken
     })
@@ -143,5 +143,9 @@ const completeProfile = asyncHandler(async(req : Request , res : Response)=>{
 
 })
 
-
-export {registerCaptain , loginCaptain , logout , getCaptainProfile , completeProfile}
+const checkAuth = asyncHandler(async(req : Request , res : Response)=>{
+    return res.status(200).json(
+        new ApiResponse(200 , 'authenticated' , req.user)
+    )
+})
+export {registerCaptain , loginCaptain , logout , getCaptainProfile , completeProfile , checkAuth}

@@ -6,9 +6,12 @@ import { ChangeEvent } from "react";
 import { toast } from "sonner";
 import { UserSignUpType } from "../types/userTypes";
 import { registerCaptain } from "../services/operations/captain/captainAuth";
+import { AuthDataContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 const VerifyEmailCaptain = () => {
-  const {userSignupData , setUserSignupData , loading , setLoading ,user} = useContext(UserDataContext);
-  
+  const {userSignupData , loading , setLoading ,user , setUser} = useContext(UserDataContext);
+  const {setIsAuthenticated , setUserRole} = useContext(AuthDataContext)
+  const navigate = useNavigate()
   console.log("user set from context.." , user)
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
   const inputRef = useRef<any>([]);
@@ -45,6 +48,13 @@ const VerifyEmailCaptain = () => {
     // api Implementation
     try{
         const response = await registerCaptain(data , setLoading);
+       if(response.success){
+          setIsAuthenticated(true)
+          setUser(response.data)
+          setUserRole('captain')
+          navigate('/captain/home')
+          
+       }
     }catch(e){
       console.log("error in veryEmail component" , e)
     }finally{
@@ -72,7 +82,7 @@ const VerifyEmailCaptain = () => {
                     }
                 </div>
                 
-                <button type="submit" disabled={loading} className="bg-black text-white font-semibold text-semibold rounded-md p-2 w-full">Verify</button> 
+                <button type="submit" disabled={loading} className="bg-green-600 text-white font-semibold text-semibold rounded-md p-2 w-full">Verify</button> 
                       
                 
             </form>

@@ -51,7 +51,7 @@ const captainSchema = new mongoose.Schema<ICaptain>({
         lastname: {
             type: String,
             required: true,
-            minlength: [3, 'Last name must be at least 3 characters long']
+            default : ""
         }
     },
     email: {
@@ -63,7 +63,7 @@ const captainSchema = new mongoose.Schema<ICaptain>({
     password: {
         type: String,
         required: true,
-        select: false
+        
     },
     socketId: {
         type: String
@@ -113,8 +113,8 @@ captainSchema.methods.generateAccessToken = function(): string {
         _id : this._id,
         email : this._id,
         fullname : {
-            firstname : this.firstname,
-            lastname  : this.lastname
+            firstname : this.fullname.firstname,
+            lastname  : this.fullname.lastname
         }
     }
     const sercret = process.env.ACCESS_TOKEN_SECRET! as jwt.Secret 
@@ -123,10 +123,10 @@ captainSchema.methods.generateAccessToken = function(): string {
 }
 
 captainSchema.methods.comparePassword = async function(password: string): Promise<boolean> {
-    if(this.password){
-        return await bcrypt.compare(password, this.password)
+    if(!this.password || !password) {
+            return false;
     }
-    return false
+    return await bcrypt.compare(password, this.password);
 }
 
 captainSchema.pre('save', async function(next) {

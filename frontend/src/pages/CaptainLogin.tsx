@@ -1,14 +1,18 @@
 import { CaptainSignInSchema } from "../schema/CaptainSchema"
 import { captainSignInSchema } from "../schema/CaptainSchema"
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { ChangeEvent , FormEvent } from "react"
-import { Link } from "react-router-dom"
+import { captainLogin } from "../services/operations/captain/captainAuth"
+import { Link, useNavigate } from "react-router-dom"
+import { UserDataContext } from "../context/UserContext"
+import { AuthDataContext } from "../context/AuthContext"
 
 const CaptainLogin = () => {
   const [input , setInput] = useState<CaptainSignInSchema>({
     email : "",
     password : ""
   })
+  const navigate = useNavigate()
   const [error , setErrors] = useState<Partial<CaptainSignInSchema>>({})
   const changeHandler = (e : ChangeEvent<HTMLInputElement>)=>{
       const {name , value} = e.target
@@ -16,7 +20,9 @@ const CaptainLogin = () => {
         ...input , [name] : value
       })
   }
-  const handleSubmit = (e : FormEvent)=>{
+  const {loading , setLoading , setUser} = useContext(UserDataContext)
+  const {setIsAuthenticated , setUserRole} = useContext(AuthDataContext)
+  const handleSubmit = async(e : FormEvent)=>{
     e.preventDefault();
     const result = captainSignInSchema.safeParse(input);
 
@@ -25,17 +31,22 @@ const CaptainLogin = () => {
         setErrors(fieldError as Partial<CaptainSignInSchema>)
         return ;
     }
-        
-    setErrors({
-      email : "",
-      password : ""
-    })
-
-    
-    console.log("input from signin form" , input)
-
-
-    // api implemetation from here
+    try{
+      const response = await captainLogin(input , setLoading)
+      if(response.success){
+        setIsAuthenticated(true)
+        setUser(response.data)
+        setUserRole('captain')
+        navigate("/captain/home")
+      }
+    }catch(e){
+      console.log("error occurred in signin component" , e)
+    }finally{
+        setErrors({
+          email : "",
+          password : ""
+        })
+    }
   }
   return (
     <div className="p-7 flex flex-col justify-between  items-start min-h-screen">
@@ -56,7 +67,7 @@ const CaptainLogin = () => {
         }
         </div>
         
-        <button className="bg-green-600 rounded-full font-semibold mb-7 px-4 py-2 border w-full text-white " type="submit" >Login </button>
+        <button className="bg-green-600 rounded-full font-semibold mb-7 px-4 py-2 border w-full text-white " type="submit" disabled={loading}>Login </button>
         <p className="text-xm text-center font-medium">New here?<Link to={"/captain-signup"}><span className="text-blue-600"> Create a new Account</span></Link> </p>
       </form>
       <Link to={"/signin"} className="bg-black max-w-xl mx-auto rounded-full text-center font-semibold mb-7 px-4 py-2 border w-full text-white ">

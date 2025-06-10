@@ -3,6 +3,7 @@ import { apiConnector } from "../../apiConnector";
 import { UserSignUpType } from "../../../types/userTypes";
 import { toast } from "sonner";
 import axios from "axios";
+import { UserSignInSchema } from "../../../schema/UserSchema";
 
 
 export const createOtp = async(email : string , setLoading : (value : boolean)=>void)=>{
@@ -36,17 +37,52 @@ export const signup = async(input : UserSignUpType , setLoading : (value : boole
             'Content-Type' : 'application/json'
         } )
         toast.success("account created!")
-        console.log("response from signup function.." , response)
-        return true;
+        console.log("response from signup function.." , response.data)
+        return response.data;
     }catch(e){
         if(axios.isAxiosError(e)){
             const errorMessage = e.response?.data?.message || "Something went wrong";
             toast.error(errorMessage)
             console.log("error from signup " , e)
         }
-        return false
+        return {success : false};
     }finally{
         setLoading(false)
         toast.dismiss(toastId)
     }
+}
+export const signin = async(input : UserSignInSchema , setLoading : (value : boolean)=>void )=>{
+    const toastId = toast.loading('verifying credentials...')
+    try{
+        setLoading(true)
+        const response = await apiConnector("POST" , USER.signin , input , {
+            'Content-Type' : 'application/json'
+        })
+
+        console.log("reponse from user signin" , response.data)
+        toast.success('logged in successfully')
+        return response.data
+    }catch(e){
+        if(axios.isAxiosError(e)){
+            const errorMessage = e.response?.data.message || "Something went wrong"
+            toast.error(errorMessage)
+        }
+        return {success : false}
+    }finally{
+        setLoading(false)
+        toast.dismiss(toastId)
+    }
+}
+
+export const checkUserAuth = async()=>{
+    try{
+      const response =  await apiConnector("GET" , USER.checkAuth , undefined , {
+        'Content-Type' : 'application/json'
+      })
+      return response.data
+    }catch(e){
+        console.log("error from checkUserAuth " , e)
+        return {success : false}
+        
+    }   
 }

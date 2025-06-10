@@ -12,7 +12,10 @@ declare global {
       user?: {
         _id: unknown;
         email: string;
-        firstname : string
+        fullname : {
+            firstname : string,
+            lastname : string
+        }
     };
     }
   }
@@ -26,7 +29,7 @@ const verifyJwt = asyncHandler(async(req : Request, res : Response , next : Next
     const isBlacklisted = await BlackListedToken.findOne({ token : accessToken });
 
     if (isBlacklisted) {
-        return new ApiError(403 , 'Token has been expired!')
+        return new ApiError(401 , 'Token has been expired!')
     }
 
     try{
@@ -41,7 +44,10 @@ const verifyJwt = asyncHandler(async(req : Request, res : Response , next : Next
         req.user = {
             _id : decodedToken._id,
             email : decodedToken.email,
-            firstname : decodedToken.firstname
+            fullname : {
+                firstname : decodedToken.fullname.firstname,
+                lastname : decodedToken.fullname.lastname
+            }
         }
         next()
 

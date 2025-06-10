@@ -1,11 +1,17 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { userSignInSchema, UserSignInSchema } from "../schema/UserSchema"
-import { ChangeEvent, FormEvent, useState } from "react"
+import { ChangeEvent, FormEvent, useContext, useState } from "react"
+import { signin } from "../services/operations/user/auth"
+import { UserDataContext } from "../context/UserContext"
+import { AuthDataContext } from "../context/AuthContext"
 const Signin = () => {
   const [input , setInput] = useState<UserSignInSchema>({
     email : "",
     password : ""
   })
+  const navigate = useNavigate();
+  const {loading , setLoading  , setUser   } = useContext(UserDataContext)
+  const {setIsAuthenticated , setUserRole} = useContext(AuthDataContext)
   const [error , setErrors] = useState<Partial<UserSignInSchema>>({})
   const changeHandler = (e : ChangeEvent<HTMLInputElement>)=>{
       const {name , value} = e.target
@@ -13,7 +19,7 @@ const Signin = () => {
         ...input , [name] : value
       })
   }
-  const handleSubmit = (e : FormEvent)=>{
+  const handleSubmit = async(e : FormEvent)=>{
     e.preventDefault();
     const result = userSignInSchema.safeParse(input);
 
@@ -22,17 +28,22 @@ const Signin = () => {
         setErrors(fieldError as Partial<UserSignInSchema>)
         return ;
     }
-        
-    setErrors({
+    try{
+      const response = await signin(input , setLoading)
+      if(response.success){
+        setIsAuthenticated(true)
+        setUser(response.data)
+        setUserRole('user')
+        navigate('/user/home')
+      }
+    }catch(e){
+        console.log("error in signin component" , e)
+    }finally{
+      setErrors({
       email : "",
       password : ""
     })
-
-    
-    console.log("input from signin form" , input)
-
-
-    // api implemetation from here
+    }   
   }
   return (
     <div className="p-7 flex flex-col justify-between  items-start min-h-screen">
