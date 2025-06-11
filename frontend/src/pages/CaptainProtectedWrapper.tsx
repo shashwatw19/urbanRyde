@@ -7,34 +7,36 @@ type CaptainProtectedWrapperType = {
 }
 const CaptainProtectedWrapper = ({children} : CaptainProtectedWrapperType) => {
   const {loading , isAuthenticated , checkAuth , userRole} = useContext(AuthDataContext)
-  const [authChecked , setAuthChecked] = useState<boolean>(false)
+  const [localLoadingState , setLocalLoadingState] = useState<boolean>(false)
+  console.log("authState from captain" , isAuthenticated , "userRole from captain" , userRole)
   const navigate = useNavigate()
-
+  console.log("loading in captainProtected" , loading)
+  console.log("localLoading" , localLoadingState)  
 
   useEffect(()=>{
     const verifyAuth = async()=>{
         if(loading)
             return;
-        else if(isAuthenticated && userRole === 'captain'){
-            setAuthChecked(true)
+        if(isAuthenticated && userRole === 'captain'){
             return;
         }
-        else if(isAuthenticated && userRole === 'user'){
+        if(isAuthenticated && userRole === 'user'){
             navigate('/user/home')
             return;
         }
 
+        setLocalLoadingState(true)
         const response = await checkAuth('captain')
         if(!response){
             navigate('/captain-signin')
             return
         }
-        setAuthChecked(true)
+        setLocalLoadingState(false)
     }
     verifyAuth()
-  } , [isAuthenticated, userRole, loading, navigate])
+  } , [isAuthenticated, userRole, loading, navigate , checkAuth])
 
-  if (loading || !authChecked) {
+  if (loading || localLoadingState) {
         return <div>Loading...</div>;
     }
 

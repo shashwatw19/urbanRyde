@@ -53,6 +53,7 @@ const verifyJwt = asyncHandler(async(req : Request, res : Response , next : Next
 
     }catch(e){
         console.log("error in verifyJwt" , e)
+        throw new ApiError(401 , 'invalid or expired user token ')
     }
 })
 

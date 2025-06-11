@@ -56,6 +56,7 @@ export const checkCaptainAuth = async()=>{
       const response =  await apiConnector("GET" , CAPTAIN.checkAuth , undefined , {
         'Content-Type' : 'application/json'
       })
+      
       return response.data
     }catch(e){
         console.log("error from checkCaptainAuth" , e)

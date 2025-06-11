@@ -9,8 +9,8 @@ import { registerCaptain } from "../services/operations/captain/captainAuth";
 import { AuthDataContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 const VerifyEmailCaptain = () => {
-  const {userSignupData , loading , setLoading ,user , setUser} = useContext(UserDataContext);
-  const {setIsAuthenticated , setUserRole} = useContext(AuthDataContext)
+  const {userSignupData , loading  , user , setUser , setLoading} = useContext(UserDataContext);
+  const {setIsAuthenticated , setUserRole , setAuthLoading} = useContext(AuthDataContext)
   const navigate = useNavigate()
   console.log("user set from context.." , user)
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
@@ -52,6 +52,7 @@ const VerifyEmailCaptain = () => {
           setIsAuthenticated(true)
           setUser(response.data)
           setUserRole('captain')
+          setAuthLoading(false)
           navigate('/captain/home')
           
        }

@@ -20,8 +20,9 @@ const CaptainLogin = () => {
         ...input , [name] : value
       })
   }
+  
   const {loading , setLoading , setUser} = useContext(UserDataContext)
-  const {setIsAuthenticated , setUserRole} = useContext(AuthDataContext)
+  const {setIsAuthenticated , setUserRole , setAuthLoading} = useContext(AuthDataContext)
   const handleSubmit = async(e : FormEvent)=>{
     e.preventDefault();
     const result = captainSignInSchema.safeParse(input);
@@ -36,6 +37,7 @@ const CaptainLogin = () => {
       if(response.success){
         setIsAuthenticated(true)
         setUser(response.data)
+        setAuthLoading(false)
         setUserRole('captain')
         navigate("/captain/home")
       }

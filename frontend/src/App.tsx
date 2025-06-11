@@ -16,8 +16,7 @@ function App() {
   return (
     <div>
    
-        <AuthProvider>
-            <Routes>
+       <Routes>
             <Route path={"/"} element={<HeroSection/>}></Route>
             <Route path={"/signup"} element={<Signup/>}></Route>
             <Route path={"/signin"} element={<Signin/>}></Route>
@@ -36,7 +35,6 @@ function App() {
               </CaptainProtectedWrapper>
             } path="/captain/home" />
           </Routes>
-        </AuthProvider>
       
     </div>
   )

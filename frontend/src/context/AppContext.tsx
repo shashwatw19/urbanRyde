@@ -1,6 +1,6 @@
 import { ReactNode } from "react"
 import UserContext from "./UserContext"
-import AuthContext from "./AuthContext"
+import AuthProvider from "./AuthContext"
 
 type AppContextProviderProps = {
   children: ReactNode;
@@ -8,11 +8,11 @@ type AppContextProviderProps = {
 
 const AppContextProvider = ({ children }: AppContextProviderProps) => {
   return (
-    <AuthContext>
+    <AuthProvider>
       <UserContext>
         {children}
       </UserContext>
-    </AuthContext>
+    </AuthProvider>
   );
 };
 

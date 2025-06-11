@@ -13,6 +13,7 @@ type AuthContextType = {
     userRole : UserRole,
     userData : any;
     loading : boolean,
+    setAuthLoading : (value : boolean)=>void
     setUserRole : (value : any)=>void
     setAuth : (authenticated : boolean , role : UserRole , data?:any)=>void
     clearAuth : ()=>void,
@@ -26,7 +27,7 @@ const AuthProvider = ({children} : AuthContextProps)=>{
     const [isAuthenticated , setIsAuthenticated] = useState<boolean>(false);
     const [userRole , setUserRole] = useState<UserRole>(null)
     const [userData , setUserData] = useState(null)
-    const [loading , setLoading] = useState(true)
+    const [loading , setAuthLoading] = useState(true)
 
     const setAuth = (authenticated : boolean , role : UserRole , data?:any)=>{
         setIsAuthenticated(authenticated)
@@ -42,23 +43,25 @@ const AuthProvider = ({children} : AuthContextProps)=>{
 
     const checkAuth = async(role : UserRole) : Promise<boolean>=>{
         try{
-            setLoading(true)
+            
             let response ;
             if(role === 'user'){
                 response = await checkUserAuth()
+                console.log("response from checkAuthUser AuthContext" , response)
             }
             else if(role === 'captain'){
                 response = await checkCaptainAuth()
+                console.log("response from checkAuthCaptain AuthContext" , response)
             }
             else {
                 return false
             }
             if(response && response.success){
-                console.log(`${role} autheticated successfully`)
+                
                 setAuth(true , role , response.data)
                 return true
             }else{
-                console.log(` ${role} authentication failed`)
+                console.log(` ${role} authentication failed AuthContext`)
                 clearAuth()
                 return false
             }
@@ -67,25 +70,24 @@ const AuthProvider = ({children} : AuthContextProps)=>{
             clearAuth()
             return false
         }finally{
-            setLoading(false)
+            setAuthLoading(false)
         }
     }
 
     useEffect(() => {
         const initAuth = async () => {
-            // Try user auth first
-            const userAuth = await checkAuth('user');
-            if (userAuth) return;
-
-            // If user auth fails, try captain auth
+        setAuthLoading(true);
+        const userAuth = await checkAuth('user');
+        if (!userAuth) {
             await checkAuth('captain');
-            setLoading(false)
+        }
+        setAuthLoading(false);
         };
-
         initAuth();
+    
     }, []);
     return (
-        <AuthDataContext.Provider value={{isAuthenticated , checkAuth , setIsAuthenticated , userRole , userData , setUserRole , loading , setAuth , clearAuth ,}}>
+        <AuthDataContext.Provider value={{isAuthenticated , setAuthLoading, checkAuth , setIsAuthenticated , userRole , userData , setUserRole , loading , setAuth , clearAuth ,}}>
             {children}
         </AuthDataContext.Provider>
     )

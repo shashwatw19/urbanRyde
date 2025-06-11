@@ -16,6 +16,7 @@ const CaptainSignup = () => {
     lastname: "",
    
   });
+  
   const { loading, setLoading, user, setUser } = useContext(UserDataContext);
   const [error, setErrors] = useState<Partial<UserSignUpSchema>>({});
   const changeHandler = (

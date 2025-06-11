@@ -50,7 +50,7 @@ const captainSchema = new mongoose.Schema<ICaptain>({
         },
         lastname: {
             type: String,
-            required: true,
+            
             default : ""
         }
     },

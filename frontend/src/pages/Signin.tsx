@@ -11,7 +11,7 @@ const Signin = () => {
   })
   const navigate = useNavigate();
   const {loading , setLoading  , setUser   } = useContext(UserDataContext)
-  const {setIsAuthenticated , setUserRole} = useContext(AuthDataContext)
+  const {setIsAuthenticated , setUserRole , setAuthLoading} = useContext(AuthDataContext)
   const [error , setErrors] = useState<Partial<UserSignInSchema>>({})
   const changeHandler = (e : ChangeEvent<HTMLInputElement>)=>{
       const {name , value} = e.target
@@ -19,6 +19,7 @@ const Signin = () => {
         ...input , [name] : value
       })
   }
+  console.log("reached user signin....")
   const handleSubmit = async(e : FormEvent)=>{
     e.preventDefault();
     const result = userSignInSchema.safeParse(input);
@@ -33,6 +34,7 @@ const Signin = () => {
       if(response.success){
         setIsAuthenticated(true)
         setUser(response.data)
+        setAuthLoading(false)
         setUserRole('user')
         navigate('/user/home')
       }

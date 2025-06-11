@@ -60,7 +60,7 @@ const captainVerify = asyncHandler(async(req : Request, res : Response , next : 
 
     }catch(e){
         console.log("error in captain veriyJwt" , e)
-        throw new ApiError(401, 'Invalid or expired token')  
+        throw new ApiError(401, 'Invalid or expired captain token')  
     }
 })
 

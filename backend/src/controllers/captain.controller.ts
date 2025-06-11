@@ -144,6 +144,7 @@ const completeProfile = asyncHandler(async(req : Request , res : Response)=>{
 })
 
 const checkAuth = asyncHandler(async(req : Request , res : Response)=>{
+    console.log("reached captain auth")
     return res.status(200).json(
         new ApiResponse(200 , 'authenticated' , req.user)
     )

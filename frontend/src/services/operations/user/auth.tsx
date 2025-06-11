@@ -79,6 +79,7 @@ export const checkUserAuth = async()=>{
       const response =  await apiConnector("GET" , USER.checkAuth , undefined , {
         'Content-Type' : 'application/json'
       })
+     
       return response.data
     }catch(e){
         console.log("error from checkUserAuth " , e)

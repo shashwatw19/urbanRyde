@@ -11,7 +11,7 @@ router.route('/registerCaptain').post([
     body('otp').notEmpty().isLength({max : 6}).withMessage('max Length of otp should be 6 digits'),
     // Fullname validation
     body('fullname.firstname').optional().trim().if((value) => value && value.length > 0).isLength({ min: 2 }).withMessage('Last name must be at least 2 characters if provided'),
-    body('fullname.lastname').trim().isLength({min: 3}).withMessage('Last name must be at least 3 characters long'),
+    body('fullname.lastname').optional().trim().if((value) => value && value.length > 0).isLength({ min: 2 }).withMessage('Last name must be at least 2 characters if provided'),
     
     // Vehicle validation
     
