@@ -11,6 +11,7 @@ export type TripType = {
   pickup : string,
   destination : string
 }
+import WatingForDriver from "../components/WatingForDriver";
 export type VehicleType = 'car' | 'auto' | 'bike' | null
 const HomeUser = () => {
   const [trip , setTrip] = useState<TripType>({
@@ -34,6 +35,7 @@ const HomeUser = () => {
   const [lookingForDriver , setLookingForDriver] = useState<boolean>(false)
   const lookingForDriverRef = useRef(null)
   const [watingForDriver , setWaitingForDriver] = useState<boolean>(false)
+  const watingforDriverRef = useRef(null)
   const changeHandler = (e :ChangeEvent< HTMLInputElement>)=>{
       const {name , value} = e.target
       setTrip({
@@ -112,6 +114,21 @@ const handleLookingForDriver = ()=>{
     })
   }
 }
+const handleWatingForDriver = ()=>{
+  if(watingForDriver){
+    gsap.to(watingforDriverRef.current , {
+      y: 0,  
+      duration : 0.5,
+      ease : "power2.out" 
+    })
+  }else{
+    gsap.to(watingforDriverRef.current , {
+      y: "100%",  
+      duration : 0.5,
+      ease : "power2.out"
+    })
+  }
+}
   useEffect(()=>{
     handlePanelOpen()
   },[panelOpen])
@@ -124,6 +141,9 @@ const handleLookingForDriver = ()=>{
   useEffect(()=>{
     handleLookingForDriver()
   },[lookingForDriver])
+   useEffect(()=>{
+    handleWatingForDriver()
+  },[watingForDriver])
   return (
     <div className="relative">
       <p className="text-4xl text-black p-7 absolute">UrbanRyde</p>
@@ -176,6 +196,9 @@ const handleLookingForDriver = ()=>{
         </div>
         <div ref={lookingForDriverRef} className="fixed w-full bottom-0 translate-y-full z-10 px-3 py-8  bg-white ">
             <LookingForDriver vehicle={vehicle} setVehicle={setVehicle} setLookingForDriver={setLookingForDriver} setWaitingForDriver={setWaitingForDriver}  />
+        </div>
+        <div ref={watingforDriverRef} className="fixed w-full bottom-0 translate-y-full z-10 px-3 py-8  bg-white ">
+            <WatingForDriver vehicle={vehicle} setVehicle={setVehicle} setLookingForDriver={setLookingForDriver} setWaitingForDriver={setWaitingForDriver}  />
         </div>
       </div>
     </div>

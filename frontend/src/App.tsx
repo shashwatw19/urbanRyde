@@ -6,7 +6,7 @@ import CaptainSignup from "./pages/CaptainSignup"
 import CaptainLogin from "./pages/CaptainLogin"
 import VerifyEmail from "./pages/VerifyEmail"
 import VerifyEmailCaptain from "./pages/VerifyEmailCaptain"
-import AuthProvider from "./context/AuthContext"
+import Riding from "./pages/Riding"
 import { UserProtectedWrapper } from "./pages/UserProtectedWrapper"
 import CaptainProtectedWrapper from "./pages/CaptainProtectedWrapper"
 import Home from "./pages/HomeUser"
@@ -29,6 +29,12 @@ function App() {
                 <Home />
               </UserProtectedWrapper>
             } path="/user/home" />
+            <Route element={
+              <UserProtectedWrapper>
+                <Riding />
+              </UserProtectedWrapper>
+            } path="/user/ride" />
+
             <Route element={
               <CaptainProtectedWrapper>
                 <HomeCaptain />

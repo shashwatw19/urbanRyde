@@ -28,7 +28,6 @@ const LookingForDriver = ({vehicle , setVehicle , setWaitingForDriver, setLookin
         }
     }
 
-    
     return (
         <div className=' max-w-md mx-auto'>
             {/* Header */}
