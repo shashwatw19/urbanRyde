@@ -22,7 +22,7 @@ const UserProtectedWrapper = ({ children }: UserProtectedWrapperType) => {
         }
 
         setLocalLoading(true)
-        const isUserAuth = await checkAuth('user')
+        const isUserAuth = await checkAuth('user')                                          
         if(!isUserAuth){
            const isCaptainAuth =  await checkAuth('captain')
             isCaptainAuth ? navigate('/captain/home') :  navigate('/signin')

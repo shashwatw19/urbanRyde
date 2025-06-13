@@ -1,35 +1,24 @@
-import { useEffect, useRef, useState } from "react"
-import { FaRoad, FaMoneyCheck, FaStar, FaClock } from "react-icons/fa"
+import { FaRoad, FaMoneyCheck } from "react-icons/fa"
 import { FaLocationDot, FaLocationPinLock } from "react-icons/fa6"
 import { Link } from "react-router-dom"
-type ConfirmRidePopUpTypes = {
-    setConfirmRidePopup: (value: boolean) => void
-    setRidePopup: (value: boolean) => void
-}
 
-const ConfirmRidePopUp = ({ setConfirmRidePopup, setRidePopup }: ConfirmRidePopUpTypes) => {
-    const handlePopUps = () => {
-        setRidePopup(false)
-        setConfirmRidePopup(false)
-    }
-    
-    return (
-        <div className="p-5 max-w-md h-screen flex flex-col bg-white">
+type RideCompleted = {
+    setCompleteRide : (input : boolean)=>void
+}
+const RideCompleted = ({setCompleteRide} : RideCompleted)=>{
+    return         <div className="p-5 max-w-md h-screen flex flex-col bg-white">
             {/* Header with notification indicator */}
             <div className="flex items-center gap-3 mb-6">
-                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                <div>
-                    <h2 className="text-2xl font-bold text-gray-900">
-                        Confirm
-                    </h2>
-                    <p className="text-sm text-gray-600 mt-1">Accept within 30 seconds</p>
-                </div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                        End this ride
+                </h2>
+ 
             </div>
 
             {/* Main content */}
             <div className="flex-1 space-y-2">
                 {/* Driver Info Card */}
-                <div className=" border border-green-200 rounded-xl ">
+                <div className=" border border-green-200  rounded-xl ">
                     <div className="flex items-center gap-2 p-3">
                         {/* Driver Avatar */}
                         <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center ">
@@ -37,13 +26,13 @@ const ConfirmRidePopUp = ({ setConfirmRidePopup, setRidePopup }: ConfirmRidePopU
                         </div>
 
                         {/* Driver Details */}
-                        <div className="flex-1">
-                            <div className="flex justify-between items-center mb-2">
+                        <div className="flex-1 ">
+                            <div className="flex justify-between  items-center mb-2">
                                 <p className="text-lg font-bold text-gray-900">Shashwat Wawge</p>
                                 <div className="text-right">
                                     <div className="flex items-center gap-1 text-green-700">
                                         <FaRoad className="text-sm" />
-                                        <span className="text-sm font-semibold">4.6 km Away</span>
+                                        <span className="text-sm font-semibold">Reached</span>
                                     </div>
                                 </div>
                             </div>
@@ -98,37 +87,18 @@ const ConfirmRidePopUp = ({ setConfirmRidePopup, setRidePopup }: ConfirmRidePopU
             {/* Action Buttons */}
             <form className="flex flex-col justify-between gap-2 p-2  mb-10 " >
 
-                    <div>
-                        <label className="block mb-2 text-sm font-medium text-gray-700" htmlFor="otp">
-                            Enter OTP
-                        </label>
-                        <input
-                            type="text"
-                            id="otp"
-                            name="otp"
-                            maxLength={6}
-                            pattern="\d*"
-                            inputMode="numeric"
-                            className="w-full px-2 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg text-gray-900 tracking-widest text-center"
-                            placeholder="______"
-                           
-                        />
-                    </div>
+                   
                     <div className="flex items-center justify-between gap-2 w-full">
-                        <button onClick={handlePopUps} className="w-2/3 bg-red-600  text-white py-2 rounded-xl font-semibold">
-                        Cancle
-                    </button>
-                        <Link className="w-2/3" to={"/captain/ride"}>
+                        
+                        <Link className="w-full" to={"/captain/ride"}>
                         <button className="w-full  bg-green-600  text-white py-2 rounded-xl font-semibold">
-                            Confirm
+                            Complete Ride
                         </button>
                     </Link>
 
                     
                     </div>
-                </form>
+            </form>
         </div>
-    )
 }
-
-export default ConfirmRidePopUp
+export {RideCompleted}

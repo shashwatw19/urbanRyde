@@ -10,7 +10,7 @@ import bike from "../assets/bike.webp"
 import auto from "../assets/auto.webp"
 
 type WaitingForDriverType = {
-    vehicle : VehicleTypes,
+    vehicle : VehicleTypes, 
     setVehicle : (value : VehicleTypes)=>void
     setWaitingForDriver : (value : boolean)=>void
     setLookingForDriver? : (value : boolean)=>void
