@@ -90,14 +90,15 @@ const RideCompleted = ({setCompleteRide} : RideCompleted)=>{
                    
                     <div className="flex items-center justify-between gap-2 w-full">
                         
-                        <Link className="w-full" to={"/captain/ride"}>
+                        <Link className="w-full" to={"/captain/home"}>
                         <button className="w-full  bg-green-600  text-white py-2 rounded-xl font-semibold">
-                            Complete Ride
+                            Finish Ride
                         </button>
-                    </Link>
+                        </Link>
 
-                    
+                        
                     </div>
+                    <p className="text-xs text-center text-red-600">Click on finsih ride button if you have completed the payment</p>
             </form>
         </div>
 }

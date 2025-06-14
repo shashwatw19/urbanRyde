@@ -24,7 +24,7 @@ const CaptainRiding = () => {
     useEffect(() => {
         handleCompleteRide()
     }, [completeRide])
-    return <div className="h-screen  flex flex-col max-w-md mx-auto  bg-gray-50">
+    return <div className="h-screen flex flex-col max-w-md mx-auto  bg-gray-50">
         <div className="h-4/5 relative">
             <img
                 className="h-full w-full object-cover"

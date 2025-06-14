@@ -24,10 +24,11 @@ app.get('/api/v1' , (req,res)=>{
 import otpRoute from '../src/routes/otp.routes'
 import userRoutes from '../src/routes/user.routes'
 import captainRoutes from '../src/routes/captain.routes'
-
+import mapRoutes from "../src/routes/map.routes"
 app.use('/api/v1/otp' , otpRoute)
 app.use('/api/v1/user' , userRoutes)
 app.use('/api/v1/captain' , captainRoutes)
+app.use('/api/v1/map' ,mapRoutes)
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     const statusCode = err.statusCode || 500;

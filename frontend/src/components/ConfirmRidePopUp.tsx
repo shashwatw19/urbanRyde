@@ -27,7 +27,7 @@ const ConfirmRidePopUp = ({ setConfirmRidePopup, setRidePopup }: ConfirmRidePopU
             </div>
 
             {/* Main content */}
-            <div className="flex-1 space-y-2">
+            <div className="flex-1 space-y-2 ">
                 {/* Driver Info Card */}
                 <div className=" border border-green-200 rounded-xl ">
                     <div className="flex items-center gap-2 p-3">
@@ -96,7 +96,7 @@ const ConfirmRidePopUp = ({ setConfirmRidePopup, setRidePopup }: ConfirmRidePopU
             </div>
 
             {/* Action Buttons */}
-            <form className="flex flex-col justify-between gap-2 p-2  mb-10 " >
+            <form className="flex flex-col justify-center  gap-5 p-2 h-[30%] " >
 
                     <div>
                         <label className="block mb-2 text-sm font-medium text-gray-700" htmlFor="otp">
