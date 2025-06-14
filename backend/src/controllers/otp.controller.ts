@@ -1,7 +1,7 @@
 import { Otp } from "../models/otp.model";
 import { ApiError } from "../utils/ApiError";
 import { ApiResponse } from "../utils/ApiResponse";
-import { asyncHandler } from "../utils/AsyncHandler";
+import { asyncHandler } from "../utils/asyncHandler";
 import { validationResult } from "express-validator";
 import { Request , Response } from "express";
 const generateOtp = () : number =>{

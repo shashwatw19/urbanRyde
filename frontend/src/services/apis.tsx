@@ -16,3 +16,7 @@ export const CAPTAIN = {
 export const OTP = {
     create : BASE_URL + "/otp/create"
 }
+
+export const MAP = {
+    suggetions : BASE_URL + "/map/get-suggestions" 
+}

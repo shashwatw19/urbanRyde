@@ -19,7 +19,7 @@ router.route('/signin').post([
 ] , signin)
 
 router.route('/checkAuth').get(verifyJwt , checkAuth)
-
+ 
 router.route('/logout').post(verifyJwt , logout)
 
 export default router

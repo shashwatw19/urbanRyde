@@ -7,17 +7,107 @@ import VehicleSelection from "../components/VehicleSelection";
 import ConfirmRide from "../components/ConfirmRide";
 import { VehicleTypes } from "../components/VehicleCard";
 import LookingForDriver from "../components/LookingForDriver";
+import WatingForDriver from "../components/WatingForDriver";
+import { useDebounce } from "../hooks/useDebounce";
+import { getSuggestions } from "../services/operations/map/getSuggestion";
+import { FaLocationDot, FaLocationPinLock } from "react-icons/fa6"
+import { FaRegClock } from "react-icons/fa6";
+export type Suggestions = string[]
+
+export type SuggestionState = {
+  pickup : Suggestions,
+  destination : Suggestions,
+  loading : Boolean ,
+  activeField : 'pickup' | 'destination' | null
+}
+
 export type TripType = {
   pickup : string,
   destination : string
 }
-import WatingForDriver from "../components/WatingForDriver";
+
 export type VehicleType = 'car' | 'auto' | 'bike' | null
+
 const HomeUser = () => {
+  
+  // suggestion system starts from here
   const [trip , setTrip] = useState<TripType>({
     pickup : "",
     destination : ""
   })
+  
+  const [suggestions, setSuggestions] = useState<SuggestionState>({
+    pickup: [],
+    destination: [],
+    loading: false,
+    activeField: null
+  });
+  
+  const debouncedPickup = useDebounce(trip.pickup, 300);
+  const debouncedDestination = useDebounce(trip.destination, 300);
+  
+  const handleInputFocus = (field: 'pickup' | 'destination') => {
+    setSuggestions(prev => ({ ...prev, activeField: field }));
+    setPanelOpen(true);
+  };
+  const fetchSuggestions = async (input: string, field: 'pickup' | 'destination') => {
+    setSuggestions(prev => ({ ...prev, loading: true }));
+    
+    try {
+      const results = await getSuggestions(input);
+      setSuggestions(prev => ({
+        ...prev,
+        [field]: results,
+        loading: false
+      }));
+    } catch (error) {
+      console.error('Error fetching suggestions:', error);
+      setSuggestions(prev => ({
+        ...prev,
+        [field]: [],
+        loading: false
+      }));
+    }
+  };
+  // Fetch suggestions for pickup
+  useEffect(() => {
+    if (debouncedPickup && suggestions.activeField === 'pickup') {
+      fetchSuggestions(debouncedPickup, 'pickup');
+    }
+  }, [debouncedPickup, suggestions.activeField]);
+  // Fetch suggestions for destination
+  useEffect(() => {
+    if (debouncedDestination && suggestions.activeField === 'destination') {
+      fetchSuggestions(debouncedDestination, 'destination');
+    }
+  }, [debouncedDestination, suggestions.activeField]);
+
+  
+  
+  const handleSuggestionSelect = (suggestion: Suggestions, field: 'pickup' | 'destination' , index : number) => {
+    setTrip(prev => ({
+      ...prev,
+      [field]: suggestion[index]
+    }));
+    
+    setSuggestions(prev => ({
+      ...prev,
+      [field]: [],
+      activeField: null
+    }));
+    
+   
+  };
+
+  const clearSuggestions = () => {
+    setSuggestions({
+      pickup: [],
+      destination: [],
+      loading: false,
+      activeField: null
+    });
+  };
+  // suggestion system ends here
   const [panelOpen , setPanelOpen] = useState<boolean>(false)
   const panelRef = useRef(null)
   const panelCloseRef = useRef(null)
@@ -146,7 +236,7 @@ const handleWatingForDriver = ()=>{
   },[watingForDriver])
   return (
     <div className="relative">
-      <p className="text-4xl text-black p-7 absolute">UrbanRyde</p>
+      <p className="text-4xl text-black p-7 font-semibold absolute">UrbanRyde</p>
       <div className="h-screen w-screen  mx-auto" onClick={()=>setVehiclePanel(false)}>
         {/* image for temporary use */}
         <img
@@ -161,32 +251,44 @@ const handleWatingForDriver = ()=>{
           
           <div ref={panelCloseRef} onClick={()=>setPanelOpen(false)} className="text-xl"><FaSortDown/></div>
           </div>
-          <form onSubmit={submitHandler} className=" flex md:flex-row md:gap-12  md:items-center flex-col  gap-5 items-start justify-start flex-wrap mt-5 md:mt-10">
-            <input
-              className="bg-gray-100 w-full md:w-[30%]  px-8 py-2 text-base rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-100 "
+          <form onSubmit={submitHandler} className=" flex md:flex-row  md:items-center flex-col  gap-4 items-start justify-start flex-wrap mt-5 md:mt-10">
+            <div className="w-full relative">
+              <input
+              className="bg-gray-100 w-full md:w-[30%]  px-8 py-2 text-base font-medium rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-100 "
               type="text"
               name="pickup"
               value={trip.pickup}
               onClick={()=>setPanelOpen(true)}
               placeholder="Add a pick-up location"
+              onFocus={() => handleInputFocus('pickup')}
               onChange={changeHandler}
             ></input>
+                  <FaLocationDot className="text-gray-600 absolute top-3 left-2"/>
+            </div>
 
             
-            <input
-              className="bg-gray-100 w-full md:w-[30%] px-8 py-2 text-base rounded-lg  text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-100 "
+            <div className="w-full relative">
+              <input
+              className="bg-gray-100 w-full md:w-[30%] px-8 py-2 text-base font-medium rounded-lg  text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-100 "
               type="text"
               name="destination"
               value={trip.destination}
               onClick={()=>setPanelOpen(true)}
-               onChange={changeHandler}
+              onFocus={() => handleInputFocus('destination')}
+              onChange={changeHandler}
               placeholder="Enter your destination"
             ></input>
-            <button className="bg-black font-semibold rounded-md px-4 py-2 text-base text-white ">Leave now</button>
+
+            <FaLocationPinLock className="text-gray-600 absolute top-3 left-2"/>
+            </div>
+            
+
+          <button className="bg-gray-900 font-semibold rounded-md px-4 py-2 text-base text-white flex items-center gap-2"><FaRegClock/>Leave now</button>
+          
           </form>
         </div>
         <div ref={panelRef} className="bg-white h-0 overflow-hidden ">
-              <LocationSearchPanel setPanelOpen={setPanelOpen} setVehiclePanel={setVehiclePanel}/>
+              <LocationSearchPanel setPanelOpen={setPanelOpen} setVehiclePanel={setVehiclePanel} suggestions={suggestions} onSuggestionSelect={handleSuggestionSelect} trip={trip}/>
         </div>
         <div ref={vehiclePanelRef} className="fixed w-full bottom-0 translate-y-full z-10 px-3 py-8  bg-white ">
             <VehicleSelection setVehiclePanel={setVehiclePanel} setConfirmRidePanel={setConfirmRidePanel} setVehicle={setVehicle}/>

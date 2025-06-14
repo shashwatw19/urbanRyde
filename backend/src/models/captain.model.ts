@@ -25,7 +25,7 @@ interface ICaptain extends Document {
         capacity : {
             type : number
         },
-        vehicleType : 'car' | 'motorcycle' | 'auto'
+        vehicleType : 'car' | 'moto' | 'auto'
     },
     location : {
         ltd : {
@@ -92,7 +92,7 @@ const captainSchema = new mongoose.Schema<ICaptain>({
         vehicleType: {
             type: String,
             
-            enum: ['car', 'motorcycle', 'auto']
+            enum: ['car', 'moto', 'auto']
         }
     },
     location: {
