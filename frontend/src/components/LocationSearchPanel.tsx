@@ -19,11 +19,7 @@ type LocationSearchPanelTypes = {
   trip : TripType
 }
 const LocationSearchPanel = ({setVehiclePanel , setPanelOpen , suggestions , onSuggestionSelect , trip} : LocationSearchPanelTypes) => {
-  const handlePanelOpens = ()=>{
-    setVehiclePanel(true)
-    setPanelOpen(false)
-  }
-  
+ 
   const renderSuggestions = ()=>{
     const {activeField , loading} = suggestions
     

@@ -20,3 +20,6 @@ export const OTP = {
 export const MAP = {
     suggetions : BASE_URL + "/map/get-suggestions" 
 }
+export const RIDE = {
+    GET_FARE : BASE_URL + "/ride/get-fare" 
+}

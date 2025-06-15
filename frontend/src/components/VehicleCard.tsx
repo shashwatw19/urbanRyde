@@ -1,46 +1,44 @@
 import car from "../assets/car.webp"
 import bike from "../assets/bike.webp"
 import auto from "../assets/auto.webp"
+import { fareType } from "../pages/HomeUser"
 import { VehicleType } from "../pages/HomeUser"
 
 export type VehicleTypes = {
     img : string,
     name : string,
     tags : string[],
-    price : number,
     type : VehicleType
-    time? : number ,
-    fair?: number
+   
 }
 const vehicleTypes : VehicleTypes[] = [
     {  
         img : car,
         name : "urbango",
         tags : ["Comfortable" , "Economy" , "compact rides"],
-        price : 100,
+        
         type : 'car'
     },
     {  
         img : auto,
         name : "urban auto",
         tags : ["Affordable" , "Pocket Friendly" , "City rides"],
-        price : 200,
         type : 'auto'
     },
     {  
         img : bike,
         name : "moto",
         tags : ["Time Saving" , "City Rides" , "Avoids traffic"],
-         price : 80,
-         type : 'bike'
+        type : 'moto'
     }
 ]
 type VehicleCardProps = {
     setConfirmRidePanel : (value : boolean)=>void
     setVehiclePanel : (value : boolean)=>void
     setVehicle : (value : VehicleTypes)=>void
+    fare : fareType
 }
-const VehicleCard = ({ setConfirmRidePanel , setVehiclePanel , setVehicle }: VehicleCardProps) => {
+const VehicleCard = ({ setConfirmRidePanel , setVehiclePanel , setVehicle , fare }: VehicleCardProps) => {
     const handlePanelOpen = (value : VehicleTypes)=>{
             setConfirmRidePanel(true)
             setVehiclePanel(false)
@@ -61,7 +59,7 @@ const VehicleCard = ({ setConfirmRidePanel , setVehiclePanel , setVehicle }: Veh
                                 <span className='ml-1 capitalize'> {vehicle.tags[2]}</span>
                             </div>
                         </div>
-                        <p className='font-semibold text-xl '>₹{vehicle.price}</p>
+                        <p className='font-semibold text-xl '>₹{fare[vehicle.type!]}</p>
                 </div>
             })
         }

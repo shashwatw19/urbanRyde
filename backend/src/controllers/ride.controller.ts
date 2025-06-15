@@ -43,4 +43,25 @@ const createRide = asyncHandler(async(req : Request , res : Response)=>{
 
 })
 
-export {createRide}
+const getFareForTrip = asyncHandler(async(req : Request , res : Response)=>{
+    const errors : Result = validationResult(req)
+
+    if(!errors.isEmpty()){
+        const errorMessage : string[] = errors.array()
+        throw new ApiError(400 , 'Invalid Fields' , false , errorMessage)
+    }
+
+    const {pickup , destination } = req.body
+
+    try{
+        const fare = await getFare(pickup , destination)
+        return res.status(200).json(
+            new ApiResponse(200 , 'fare calculated for trip' , fare)
+        )
+    }catch(e){
+        console.error("errro while calculating fare" , e)
+        throw new ApiError(404 , ' not able to calculate fare')
+    }
+})
+
+export {createRide , getFareForTrip}

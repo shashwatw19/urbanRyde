@@ -12,6 +12,13 @@ import { useDebounce } from "../hooks/useDebounce";
 import { getSuggestions } from "../services/operations/map/getSuggestion";
 import { FaLocationDot, FaLocationPinLock } from "react-icons/fa6"
 import { FaRegClock } from "react-icons/fa6";
+import { toast } from "sonner";
+import { getFareForTrip } from "../services/operations/ride/tripSetup";
+export type fareType = {
+  car: number | undefined,
+  auto : number | undefined,
+  moto : number | undefined
+}
 export type Suggestions = string[]
 
 export type SuggestionState = {
@@ -26,7 +33,7 @@ export type TripType = {
   destination : string
 }
 
-export type VehicleType = 'car' | 'auto' | 'bike' | null
+export type VehicleType = 'car' | 'auto' | 'moto' | null
 
 const HomeUser = () => {
   
@@ -108,6 +115,39 @@ const HomeUser = () => {
     });
   };
   // suggestion system ends here
+
+  // setting up fare for trip 
+  const [fare , setFare] = useState<fareType>({
+    car : undefined,
+    auto : undefined,
+    moto : undefined
+  })
+  const setupFareForTrip = async(pickup : string , destination : string) : Promise<boolean>=>{
+      try{
+        const fare : fareType = await getFareForTrip(pickup , destination)
+        setFare(fare)
+        return true
+      }catch(e){
+        console.log("error in setupFareForTrip" , e)
+        return false
+      }
+  }
+  const handleLeaveNow = async()=>{
+  if(trip.pickup && trip.destination && trip.pickup.length >2 && trip.destination.length > 2 ){
+    if(await setupFareForTrip(trip.pickup , trip.destination )){
+        clearSuggestions()
+        setPanelOpen(false)
+        setVehiclePanel(true)
+    }
+    else{
+      toast.error("Not Able To Create Trip for You . Please Try Again In Some Time")
+    }
+   
+
+  }else{
+    toast.info('Select Pickup And Destination To Begin Ride')
+  }
+}
   const [panelOpen , setPanelOpen] = useState<boolean>(false)
   const panelRef = useRef(null)
   const panelCloseRef = useRef(null)
@@ -119,7 +159,7 @@ const HomeUser = () => {
     img : "",
     name : "",
     tags : [],
-    price : 0,
+    
     type : null
   })
   const [lookingForDriver , setLookingForDriver] = useState<boolean>(false)
@@ -219,6 +259,7 @@ const handleWatingForDriver = ()=>{
     })
   }
 }
+
   useEffect(()=>{
     handlePanelOpen()
   },[panelOpen])
@@ -235,7 +276,7 @@ const handleWatingForDriver = ()=>{
     handleWatingForDriver()
   },[watingForDriver])
   return (
-    <div className="relative">
+    <div className="relative overflow-x-hidden">
       <p className="text-4xl text-black p-7 font-semibold absolute">UrbanRyde</p>
       <div className="h-screen w-screen  mx-auto" onClick={()=>setVehiclePanel(false)}>
         {/* image for temporary use */}
@@ -283,7 +324,7 @@ const handleWatingForDriver = ()=>{
             </div>
             
 
-          <button className="bg-gray-900 font-semibold rounded-md px-4 py-2 text-base text-white flex items-center gap-2"><FaRegClock/>Leave now</button>
+          <button onClick={()=>handleLeaveNow()} className="bg-gray-900 font-semibold rounded-md px-4 py-2 text-base text-white flex items-center gap-2"><FaRegClock/>Leave now</button>
           
           </form>
         </div>
@@ -291,7 +332,7 @@ const handleWatingForDriver = ()=>{
               <LocationSearchPanel setPanelOpen={setPanelOpen} setVehiclePanel={setVehiclePanel} suggestions={suggestions} onSuggestionSelect={handleSuggestionSelect} trip={trip}/>
         </div>
         <div ref={vehiclePanelRef} className="fixed w-full bottom-0 translate-y-full z-10 px-3 py-8  bg-white ">
-            <VehicleSelection setVehiclePanel={setVehiclePanel} setConfirmRidePanel={setConfirmRidePanel} setVehicle={setVehicle}/>
+            <VehicleSelection fare={fare} setVehiclePanel={setVehiclePanel} setConfirmRidePanel={setConfirmRidePanel} setVehicle={setVehicle}/>
         </div>
         <div ref={confirmRideRef} className="fixed w-full bottom-0 translate-y-full z-10 px-3 py-8  bg-white ">
             <ConfirmRide vehicle={vehicle} setVehicle={setVehicle} setConfirmRidePanel={setConfirmRidePanel} setLookingForDriver={setLookingForDriver}/>

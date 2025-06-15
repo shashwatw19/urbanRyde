@@ -36,7 +36,7 @@ const getFare = async(pickup : string , destination : string)=>{
 
     return fare;
     }catch(e){
-        console.error("error occured in gtFare" , e)
+        console.error("error occured in getFare" , e)
         throw e
     }
 }
