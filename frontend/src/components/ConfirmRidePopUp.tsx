@@ -1,10 +1,16 @@
-import { useEffect, useRef, useState } from "react"
-import { FaRoad, FaMoneyCheck, FaStar, FaClock } from "react-icons/fa"
+import { FaRoad, FaMoneyCheck } from "react-icons/fa"
 import { FaLocationDot, FaLocationPinLock } from "react-icons/fa6"
-import { Link } from "react-router-dom"
+import { RideContext } from "../context/RideContext"
+import { FormEvent, useState } from "react"
+import { toast } from "sonner"
+import { startRide } from "../services/operations/ride/tripSetup"
+import { UserDataContext } from "../context/UserContext"
+import { useContext } from "react"
+import { useNavigate } from "react-router-dom"
 type ConfirmRidePopUpTypes = {
     setConfirmRidePopup: (value: boolean) => void
     setRidePopup: (value: boolean) => void
+
 }
 
 const ConfirmRidePopUp = ({ setConfirmRidePopup, setRidePopup }: ConfirmRidePopUpTypes) => {
@@ -12,17 +18,49 @@ const ConfirmRidePopUp = ({ setConfirmRidePopup, setRidePopup }: ConfirmRidePopU
         setRidePopup(false)
         setConfirmRidePopup(false)
     }
-    
+    const {ride , setRide} = useContext(RideContext)
+    const navigate = useNavigate()
+    const { setLoading , loading} = useContext(UserDataContext)
+    const handleStartRide = async (e: FormEvent) => {
+        e.preventDefault()
+
+        if (otp.length != 6) {
+            toast.error('please enter a valid otp')
+            return;
+        }
+        const data = {
+            rideId: ride?._id!,
+            otp: otp,
+            userSocketId: ride?.user?.socketId!,
+            setLoading: setLoading,
+            setRide : setRide
+        }
+        console.log("data sent for confirmRide" , data)
+        try {
+            const response = await startRide(data)
+            if (response) {
+                navigate('/captain/ride')
+                
+
+            } else {
+                toast.error('invalid ride or otp')
+            }
+            return
+        } catch (e) {
+            console.log("error while starting ride in confirmRidePopUP", e)
+        }
+    }
+    const [otp, setOtp] = useState<string>("")
     return (
         <div className="p-5 max-w-md h-screen flex flex-col bg-white">
             {/* Header with notification indicator */}
             <div className="flex items-center gap-3 mb-6">
-                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+
                 <div>
                     <h2 className="text-2xl font-bold text-gray-900">
                         Confirm
                     </h2>
-                    <p className="text-sm text-gray-600 mt-1">Accept within 30 seconds</p>
+                    <p className="text-sm text-gray-600 mt-1 capitalize">when you reach at pickup enter otp to start the ride</p>
                 </div>
             </div>
 
@@ -33,13 +71,13 @@ const ConfirmRidePopUp = ({ setConfirmRidePopup, setRidePopup }: ConfirmRidePopU
                     <div className="flex items-center gap-2 p-3">
                         {/* Driver Avatar */}
                         <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center ">
-                            <span className="text-xl font-bold text-white">S</span>
+                            <span className="text-base font-bold text-white">{ride?.user?.fullname.firstname[0]}</span>
                         </div>
 
                         {/* Driver Details */}
                         <div className="flex-1">
                             <div className="flex justify-between items-center mb-2">
-                                <p className="text-lg font-bold text-gray-900">Shashwat Wawge</p>
+                                <p className="text-base font-bold text-gray-700 flex items-center gap-2 capitalize"><span>{ride?.user?.fullname.firstname}</span><span>{ride?.user?.fullname.lastname}</span></p>
                                 <div className="text-right">
                                     <div className="flex items-center gap-1 text-green-700">
                                         <FaRoad className="text-sm" />
@@ -59,9 +97,9 @@ const ConfirmRidePopUp = ({ setConfirmRidePopup, setRidePopup }: ConfirmRidePopU
                             <FaLocationDot className="text-blue-600 text-sm" />
                         </div>
                         <div className="flex-1">
-                            <p className="text-lg font-semibold text-gray-900 ">8/31 Vijay Nagar</p>
-                            
-                            <p className="text-sm text-gray-600">Vijay Nagar Indore</p>
+                            <p className="text-base font-semibold text-gray-700 ">{ride?.pickup}</p>
+
+
                         </div>
                     </div>
 
@@ -71,8 +109,7 @@ const ConfirmRidePopUp = ({ setConfirmRidePopup, setRidePopup }: ConfirmRidePopU
                             <FaLocationPinLock className="text-red-600 text-sm" />
                         </div>
                         <div className="flex-1">
-                            <p className="text-lg font-semibold text-gray-900 ">75-C Vandana Nagar</p>
-                            <p className="text-sm text-gray-600">Near Bengali Square</p>
+                            <p className="text-base font-semibold text-gray-700 ">{ride?.destination}</p>
                         </div>
                     </div>
 
@@ -83,7 +120,7 @@ const ConfirmRidePopUp = ({ setConfirmRidePopup, setRidePopup }: ConfirmRidePopU
                         </div>
                         <div className="flex-1 flex justify-between items-center">
                             <div>
-                                <p className="text-xl font-bold text-green-700">₹100</p>
+                                <p className="text-lg font-bold text-green-700">₹{ride?.fare}</p>
                                 <p className="text-sm text-green-600 font-medium">Trip Fare</p>
                             </div>
                             <div className="text-center">
@@ -98,35 +135,33 @@ const ConfirmRidePopUp = ({ setConfirmRidePopup, setRidePopup }: ConfirmRidePopU
             {/* Action Buttons */}
             <form className="flex flex-col justify-center  gap-5 p-2 h-[30%] " >
 
-                    <div>
-                        <label className="block mb-2 text-sm font-medium text-gray-700" htmlFor="otp">
-                            Enter OTP
-                        </label>
-                        <input
-                            type="text"
-                            id="otp"
-                            name="otp"
-                            maxLength={6}
-                            pattern="\d*"
-                            inputMode="numeric"
-                            className="w-full px-2 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg text-gray-900 tracking-widest text-center"
-                            placeholder="______"
-                           
-                        />
-                    </div>
-                    <div className="flex items-center justify-between gap-2 w-full">
-                        <button onClick={handlePopUps} className="w-2/3 bg-red-600  text-white py-2 rounded-xl font-semibold">
+                <div>
+                    <label className="block mb-2 text-sm font-medium text-gray-700" htmlFor="otp">
+                        Enter OTP
+                    </label>
+                    <input
+                        type="text"
+                        id="otp"
+                        name="otp"
+                        maxLength={6}
+                        pattern="\d*"
+                        inputMode="numeric"
+                        className="w-full px-2 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg text-gray-900 tracking-widest text-center"
+                        placeholder="______"
+                        onChange={(e) => setOtp(e.target.value)}
+                        value={otp}
+                    />
+                </div>
+                <div className="flex items-center justify-between gap-2 w-full">
+                    <button onClick={handlePopUps} disabled={loading} className="w-full bg-red-600  text-white py-2 rounded-xl font-semibold">
                         Cancle
                     </button>
-                        <Link className="w-2/3" to={"/captain/ride"}>
-                        <button className="w-full  bg-green-600  text-white py-2 rounded-xl font-semibold">
-                            Confirm
-                        </button>
-                    </Link>
 
-                    
-                    </div>
-                </form>
+                    <button type="submit" disabled={loading} onClick={(e)=>handleStartRide(e)} className="w-full  bg-green-600  text-white py-2 rounded-xl font-semibold">
+                        Confirm
+                    </button>
+                </div>
+            </form>
         </div>
     )
 }

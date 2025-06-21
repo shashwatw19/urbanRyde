@@ -1,5 +1,5 @@
 import { Captain } from "../models/captain.model";
-import { asyncHandler } from "../utils/AsyncHandler";
+import { asyncHandler } from "../utils/asyncHandler";
 import { ApiResponse } from "../utils/ApiResponse";
 import { ApiError } from "../utils/ApiError";
 import { Response , Request } from "express";
@@ -16,7 +16,7 @@ const registerCaptain = asyncHandler(async(req : Request , res : Response )=>{
         throw new ApiError(411 , 'invalid field input' , false , errorMessage)
     }
 
-    const {otp , email , password , fullname } = req.body;
+    const {otp , email , password , fullname , vehicle} = req.body;
 
     let currentOtp = otp;
     const generatedOtp = await Otp.find({email}).sort({createdAt : -1}).limit(1)
@@ -38,7 +38,12 @@ const registerCaptain = asyncHandler(async(req : Request , res : Response )=>{
             firstname : fullname.firstname,
             lastname : fullname.lastname
         },
-      
+        vehicle : {
+            color : vehicle.color,
+            NumberPlate : vehicle.NumberPlate,
+            capacity : vehicle.capacity,
+            vehicleType : vehicle.vehicleType
+        },
         password : password
     })
 
@@ -144,9 +149,9 @@ const completeProfile = asyncHandler(async(req : Request , res : Response)=>{
 })
 
 const checkAuth = asyncHandler(async(req : Request , res : Response)=>{
-    console.log("reached captain auth")
+    const captain = await Captain.findById(req.user?._id).select('-password')
     return res.status(200).json(
-        new ApiResponse(200 , 'authenticated' , req.user)
+        new ApiResponse(200 , 'authenticated' , captain!)
     )
 })
 export {registerCaptain , loginCaptain , logout , getCaptainProfile , completeProfile , checkAuth}

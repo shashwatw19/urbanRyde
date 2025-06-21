@@ -13,7 +13,7 @@ const vehicle: VehicleTypes = {
   tags: ["affordable", "City Rides", "Economy"],
 };
 
-const Riding = () => {
+const UserRideCompleted = () => {
   const getVehicleImage = (vehicle: VehicleTypes) => {
     switch (vehicle.type) {
       case "car":
@@ -132,4 +132,4 @@ const Riding = () => {
   );
 };
 
-export default Riding;
+export default UserRideCompleted;

@@ -1,7 +1,8 @@
 import Router from 'express'
-import {body} from 'express-validator'
+import {body , query} from 'express-validator'
 import { verifyJwt } from '../middleware/auth.midleware'
-import {createRide , getFareForTrip} from '../controllers/ride.controller'
+import {createRide , getFareForTrip , confirmRide , startRide , isValidRideUser , isValidRideCaptain} from '../controllers/ride.controller'
+import { captainVerify } from '../middleware/captainAuth.middleware'
 const router = Router()
 
 router.route('/create').post([
@@ -15,10 +16,25 @@ router.route('/create').post([
 ] , verifyJwt , createRide)
 
 router.route('/get-fare').get([
-    body('pickup').isString().isLength({ min: 3 }).withMessage('invalid pickup address'),
-    body('destination').isString().isLength({ min: 3 }).withMessage('invalid pickup length')
-] , verifyJwt , getFareForTrip)
+    query('pickup').isString().isLength({ min: 3 }).withMessage('invalid pickup address'),
+    query('destination').isString().isLength({ min: 3 }).withMessage('invalid pickup length')
+], verifyJwt, getFareForTrip)
 
+router.route('/confirm-ride').post([
+    body('rideId').isString().withMessage('rideId is required'),
+],captainVerify , confirmRide)
 
+router.route('/start-ride').post([
+    body('rideId').isString().withMessage('rideId is required and must be a string'),
+    body('otp').isString().isLength({ min: 6, max: 6 }).withMessage('otp is required and must be 6 characters long'),
+    body('userSocketId').isString().withMessage('userSocketId is required and must be a string')
+], captainVerify, startRide)
 
+router.route('/verify/user').post([
+    body('rideId').isString().withMessage('rideId is required and must be a string')
+] , verifyJwt , isValidRideUser)
+
+router.route('/verify/captain').post([
+    body('rideId').isString().withMessage('rideId is required and must be a string')
+] , captainVerify , isValidRideCaptain)
 export default router

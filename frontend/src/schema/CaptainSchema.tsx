@@ -6,9 +6,9 @@ export const captainSignUpSchema = z.object({
     email : z.string().trim().email('Please enter a valid email address'),
     password : z.string().trim().min(6 , 'Password must be atleast 6 characters long'),
     color : z.string().trim().min(3 , 'Colour must be 3 character long'),
-    numberPlate : z.string().trim().min(10 , 'Enter a valid plate number'),
+    NumberPlate : z.string().trim().min(10 , 'Enter a valid plate number'),
     capacity : z.number().min(1 , 'Vehicle should have minimum capacity of 1'),
-    vehicleType : z.enum(["car", "auto", "bike"], {
+    vehicleType : z.enum(["car", "auto", "moto"], {
         required_error: "Vehicle type is required",
         invalid_type_error: "Vehicle type must be one of: car, auto, bike"
     })

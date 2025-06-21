@@ -10,7 +10,7 @@ type VehicleSelectionType = {
 }
 const VehicleSelection = ({setVehiclePanel , setConfirmRidePanel , setVehicle , fare}:VehicleSelectionType) => {
   return (
-   <div className='w-full relative'>
+   <div className='w-full max-w-md mx-auto px-6 pt-2 relative'>
        <div className="text-2xl top-0 absolute right-0" onClick={()=>setVehiclePanel(false)}><FaSortDown/></div>
       <p className='text-2xl font-semibold text-black mb-5 capitalize'>Choose a vehicle</p>  
  

@@ -5,7 +5,8 @@ export type User = {
         lastname : string
     },
     email : string,
-    password? : string
+    password? : string,
+    socketId? : string
 }
 
 export interface UserSignUpType extends User{

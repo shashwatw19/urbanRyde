@@ -28,12 +28,8 @@ interface ICaptain extends Document {
         vehicleType : 'car' | 'moto' | 'auto'
     },
     location : {
-        ltd : {
-            type : number
-        },
-        lng : {
-            type : number
-        },
+        type: "Point";
+        coordinates: [number, number]; 
 
     },
 
@@ -76,36 +72,43 @@ const captainSchema = new mongoose.Schema<ICaptain>({
     vehicle: {
         color: {
             type: String,
-            
+            required : true,
             minlength: [3, 'Color must be at least 3 characters long']
         },
         NumberPlate: {
             type: String,
-            
+            required : true,
             minlength: [3, 'Number plate must be at least 3 characters long']
         },
         capacity: {
             type: Number,
-            
+            required : true,
             min: [1, 'Capacity must be at least 1']
         },
         vehicleType: {
             type: String,
-            
+            required : true,
             enum: ['car', 'moto', 'auto']
         }
     },
     location: {
-        ltd: {
-            type: Number
+        type: {
+            type: String,
+            enum: ['Point'],
+            default: 'Point',
+            
         },
-        lng: {
-            type: Number
+        coordinates: {
+            type: [Number], // [longitude, latitude]
+            required: false,
+            default : [0 , 0]
         }
     }
 }, {
     timestamps: true
 })
+
+captainSchema.index({ location: '2dsphere' });
 
 captainSchema.methods.generateAccessToken = function(): string {
     const payload : {_id : string , email : string , fullname : {firstname : string , lastname : string}} = 

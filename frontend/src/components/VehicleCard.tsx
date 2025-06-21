@@ -16,7 +16,6 @@ const vehicleTypes : VehicleTypes[] = [
         img : car,
         name : "urbango",
         tags : ["Comfortable" , "Economy" , "compact rides"],
-        
         type : 'car'
     },
     {  

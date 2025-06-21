@@ -1,36 +1,49 @@
 import { createContext, ReactNode, useState } from "react"
 import { User } from "../types/userTypes";
+import { Captain, SignUpCaptain } from "../types/captainTypes";
 import { UserSignUpType } from "../types/userTypes";
 type UserContextProps = {
   children: ReactNode;
 };
 type UserContextTpye = {
-    user : User,
-    setUser : (value : User)=>void,
-    userSignupData : UserSignUpType
-    setUserSignupData : (value : UserSignUpType)=>void
+    user : User | Captain,
+    setUser : (value : User | Captain)=>void,
+    userSignupData : UserSignUpType | SignUpCaptain
+    setUserSignupData : (value : UserSignUpType | SignUpCaptain)=>void
     loading : boolean
     setLoading : (value : boolean)=>void
 }
 export const UserDataContext = createContext<UserContextTpye>({} as UserContextTpye)
 
 const UserContext = ({ children }: UserContextProps) => {
-   const [user , setUser] = useState<User>({
+   const [user , setUser] = useState<User | Captain>({
         _id : "",
         email : "",
         fullname : {
             firstname : "",
             lastname : ""
+        },
+        vehicle : {
+          color : "",
+          capacity : undefined ,
+          NumberPlate : "",
+          vehicleType : null
         }
    }) 
-   const [userSignupData , setUserSignupData] = useState<UserSignUpType>({
+   const [userSignupData , setUserSignupData] = useState<UserSignUpType | SignUpCaptain>({
         email : "",
         password : "",
         fullname : {
             firstname : "",
             lastname : ""
         },
-        otp : ""
+        otp : "",
+        vehicle : {
+          color : "",
+          capacity : undefined ,
+          NumberPlate : "",
+          vehicleType : null
+        }
 
    })
    const [loading , setLoading] = useState<boolean>(false)

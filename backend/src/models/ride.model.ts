@@ -2,8 +2,8 @@ import mongoose from 'mongoose'
 import { Document } from 'mongoose'
 
 interface IRide extends Document {
-    user: mongoose.Types.ObjectId
-    captain: mongoose.Schema.Types.ObjectId
+    user: mongoose.Types.ObjectId | null
+    captain: mongoose.Types.ObjectId | null
     pickup: string
     destination: string
     fare: number
@@ -13,12 +13,12 @@ interface IRide extends Document {
     paymentId: string
     orderId: string
     signature: string
-    otp: string
+    otp: string | undefined
 }
 
 const RideSchema = new mongoose.Schema<IRide>({
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    captain: { type: mongoose.Schema.Types.ObjectId, ref: 'Captain', },
+    user: { type: mongoose.Types.ObjectId, ref: 'User', required: true },
+    captain: { type: mongoose.Types.ObjectId, ref: 'Captain', },
     pickup: { type: String, required: true },
     destination: { type: String, required: true },
     fare: { type: Number, required: true },

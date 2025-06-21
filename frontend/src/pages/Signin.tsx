@@ -11,7 +11,8 @@ const Signin = () => {
   })
   const navigate = useNavigate();
   const {loading , setLoading  , setUser   } = useContext(UserDataContext)
-  const {setIsAuthenticated , setUserRole , setAuthLoading} = useContext(AuthDataContext)
+  const {setIsAuthenticated , setUserRole , setAuthLoading , setUserData} = useContext(AuthDataContext)
+  
   const [error , setErrors] = useState<Partial<UserSignInSchema>>({})
   const changeHandler = (e : ChangeEvent<HTMLInputElement>)=>{
       const {name , value} = e.target
@@ -33,7 +34,7 @@ const Signin = () => {
       const response = await signin(input , setLoading)
       if(response.success){
         setIsAuthenticated(true)
-        setUser(response.data)
+        setUserData(response.data)
         setAuthLoading(false)
         setUserRole('user')
         navigate('/user/home')

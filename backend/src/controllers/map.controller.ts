@@ -1,4 +1,4 @@
-import { asyncHandler } from "../utils/AsyncHandler";
+import { asyncHandler } from "../utils/asyncHandler";
 import { validationResult } from "express-validator";
 import { ApiError } from "../utils/ApiError";
 import { Result } from "express-validator";

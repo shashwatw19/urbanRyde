@@ -2,7 +2,10 @@ import { FaClock } from "react-icons/fa6";
 import { SiSpeedtest } from "react-icons/si";
 import { FaRegNoteSticky } from "react-icons/fa6";
 import { FaStar } from "react-icons/fa";
+import { useContext } from "react";
+import { AuthDataContext } from "../context/AuthContext";
 const CaptainDetails = () => {
+  const {userData} = useContext(AuthDataContext)
   return (
     <div className='bg-white p-6 flex flex-col gap-5 justify-start'>
         <div className="p-3 ">
@@ -17,7 +20,7 @@ const CaptainDetails = () => {
 
                   {/* Driver Details */}
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-900">Shashwat Wawge</p>
+                    <p className="font-semibold text-gray-900">{userData.fullname.firstname} {userData.fullname.lastname}</p>
                     
                     <div className="flex items-center gap-1">
                       <FaStar className="text-yellow-500 text-xs" />
@@ -35,24 +38,24 @@ const CaptainDetails = () => {
             </div>
           </div>
 
-          <div className="flex flex-row itesms-center justify-between p-3 bg-gray-100 rounded-xl">
-            <div className="text-center">
-              <FaClock className="text-2xl font-thin mx-auto "/>  
-              <h4 className="text-lg font-medium" >10.2Hrs</h4>
-              <p  className="text-sm text-gray-600">Online</p>
+            <div className="flex justify-between gap-4 p-4 bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-500 rounded-lg shadow-sm">
+              <div className="flex flex-col items-center flex-1">
+                <FaClock className="text-xl text-black  mb-1" />
+                <span className="text-base font-semibold text-gray-900">10.2h</span>
+                <span className="text-xs text-gray-800">Online</span>
+              </div>
+              <div className="flex flex-col items-center flex-1">
+                <SiSpeedtest className="text-xl text-black  mb-1" />
+                <span className="text-base font-semibold text-gray-900">25 km</span>
+                <span className="text-xs text-gray-800">Distance</span>
+              </div>
+              <div className="flex flex-col items-center flex-1">
+                <FaRegNoteSticky className="text-xl text-black mb-1" />
+                <span className="text-base font-semibold text-gray-900">5</span>
+                <span className="text-xs text-gray-800">Trips</span>
+              </div>
             </div>
-            <div className="text-center">
-              <SiSpeedtest className="text-2xl font-thin mx-auto"/>
-              <h4 className="text-lg font-medium" >10.2Hrs</h4>
-              <p className="text-sm text-gray-600">Online</p>
-            </div>
-            <div className="text-center">
-              <FaRegNoteSticky className="text-2xl font-thin mx-auto "/>
-              <h4 className="text-lg font-medium" >10.2Hrs</h4>
-              <p className="text-sm text-gray-600">Online</p>
-            </div>
-          </div>
-    </div>
+  </div>
   )
 }
 

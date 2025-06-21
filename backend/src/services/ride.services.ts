@@ -1,4 +1,3 @@
-import { Ride } from "../models/ride.model";
 import {getDistanceTime} from '../services/map.services'
 
 const getFare = async(pickup : string , destination : string)=>{

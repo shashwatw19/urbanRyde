@@ -5,9 +5,8 @@ const app = express();
 
 
 app.use(cors({
-    origin : 'http://localhost:5173',
+    origin : ['http://localhost:5173','https://530pz896-5173.inc1.devtunnels.ms'],
     credentials : true
-    
 }))
 
 app.use(express.json())
@@ -16,9 +15,6 @@ app.use(express.urlencoded({extended: true}))
 app.use(cookieParser())
 
 
-app.get('/api/v1' , (req,res)=>{
-    res.send(`<h1>Hello Mf!!</h1>`)
-})
 
 // import routes starts from here
 import otpRoute from '../src/routes/otp.routes'

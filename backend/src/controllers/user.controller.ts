@@ -1,12 +1,12 @@
 import { User } from "../models/user.model";
 import { ApiError } from "../utils/ApiError";
 import { ApiResponse } from "../utils/ApiResponse";
-import { asyncHandler } from "../utils/AsyncHandler";
+import { asyncHandler } from "../utils/asyncHandler";
 import { Result, validationResult , ValidationError } from "express-validator";
 import e, { Request , Response } from "express";
 import { Otp } from "../models/otp.model";
 import { BlackListedToken } from "../models/blackListedToken.model";
-
+import { CookieOptions } from "express";
 const signup = asyncHandler(async(req : Request , res : Response)=>{
     const errors : Result   = validationResult(req)
 
@@ -50,10 +50,11 @@ const signup = asyncHandler(async(req : Request , res : Response)=>{
     
     const token = newUser.generateAccessToken()
 
-    const options = {
+    const options : CookieOptions= {
         secure : true,
         httpOnly : true,
-        maxAge :  2 * 24 * 60 * 60 * 1000  // 2 days in milliseconds
+        maxAge :  2 * 24 * 60 * 60 * 1000,
+        sameSite: 'none'  // 2 days in milliseconds
         
     }
     newUser.password = undefined
@@ -82,14 +83,15 @@ const signin = asyncHandler(async(req : Request , res : Response)=>{
     }
 
     const accessToken = validUser.generateAccessToken()
-    const options = {
+    const options : CookieOptions = {
         secure : true,
         httpOnly : true,
-        maxAge : 2 * 24 * 60 * 60 * 1000
+        maxAge : 2 * 24 * 60 * 60 * 1000,
+        sameSite: 'none'
     }
 
     validUser.password = undefined
-
+    // need to import coookieOptions......
     return res.status(200).cookie("accessToken" , accessToken , options).json(
         new ApiResponse(200 , 'logged in success!' , validUser)
     )
@@ -111,9 +113,9 @@ const logout = asyncHandler(async(req : Request,res : Response)=>{
     )
 })
 const checkAuth = asyncHandler(async(req : Request , res : Response)=>{
-        console.log("reached user auth")
+        const user = await User.findById(req.user?._id).select('-password')
         return res.status(200).json(
-            new ApiResponse(200 , 'authenticated ' , req.user)
+            new ApiResponse(200 , 'authenticated ' , user!)
         )
 })
 export {signup , signin , logout , checkAuth}

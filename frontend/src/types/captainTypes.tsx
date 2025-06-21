@@ -3,28 +3,15 @@ import { User } from "./userTypes";
 type CaptainStatus = "active" | "inactive";
 
 export interface Captain extends User{
-    status: CaptainStatus;
+    
     vehicle : {
-        color : {
-            type : string
-        },
-        NumberPlate : {
-            type : string
-        },
-        capacity : {
-            type : number
-        },
-        vehicleType : 'car' | 'motorcycle' | 'auto'
+        color : string ,
+        NumberPlate : string,
+        capacity  : number | undefined,
+        vehicleType : 'car' | 'moto' | 'auto' | null,
+        
     },
-    location? : {
-        ltd : {
-            type : number
-        },
-        lng : {
-            type : number
-        },
-
-    },
+    status? : CaptainStatus
     
 }
 export interface SignUpCaptain extends Captain{

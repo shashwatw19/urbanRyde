@@ -26,7 +26,7 @@ const LocationSearchPanel = ({setVehiclePanel , setPanelOpen , suggestions , onS
         if (loading) {
             // loader while suggestions are fetched
             return (
-                <div className="p-4 space-y-3">
+                <div className="p-4 mt-12">
                     {[1, 2, 3].map((i) => (
                         <div key={i} className="flex items-center gap-3 p-3 animate-pulse">
                             <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
@@ -43,14 +43,14 @@ const LocationSearchPanel = ({setVehiclePanel , setPanelOpen , suggestions , onS
 
         if (currentSuggestions?.length === 0) {
             return (
-                <div className="p-4 text-center text-base text-gray-500">
+                <div className="flex flex-col items-center justify-center h-64 text-center text-base text-gray-500">
                     <FaLocationDot className="text-base mx-auto mb-2 opacity-50"/>
                     <p>No suggestions found</p>
                 </div>
             );
         }
         return (
-            <div className="p-4 space-y-2">
+            <div className="p-4 mt-8">
                 <h3 className="text-sm px-3 font-semibold text-gray-600 uppercase tracking-wide mb-3">
                     {activeField === 'pickup' && 'Select Pickup Location'}
                 </h3>

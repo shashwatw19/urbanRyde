@@ -6,7 +6,7 @@ type CaptainProtectedWrapperType = {
     children : ReactNode
 }
 const CaptainProtectedWrapper = ({children} : CaptainProtectedWrapperType) => {
-  const {loading , isAuthenticated , checkAuth , userRole} = useContext(AuthDataContext)
+  const {loading , isAuthenticated , checkAuth , userRole } = useContext(AuthDataContext)
   const [localLoadingState , setLocalLoadingState] = useState<boolean>(false)
   console.log("authState from captain" , isAuthenticated , "userRole from captain" , userRole)
   const navigate = useNavigate()
@@ -18,6 +18,7 @@ const CaptainProtectedWrapper = ({children} : CaptainProtectedWrapperType) => {
         if(loading)
             return;
         if(isAuthenticated && userRole === 'captain'){
+            
             return;
         }
         if(isAuthenticated && userRole === 'user'){

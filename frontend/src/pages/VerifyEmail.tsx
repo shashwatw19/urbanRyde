@@ -10,7 +10,7 @@ import AuthContext, { AuthDataContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 const VerifyEmail = () => {
   const {userSignupData , setUserSignupData , loading , setLoading ,setUser , user} = useContext(UserDataContext);
-  const {setIsAuthenticated , setUserRole , setAuthLoading} = useContext(AuthDataContext)
+  const {setIsAuthenticated , setUserRole , setAuthLoading , setUserData} = useContext(AuthDataContext)
   const navigate = useNavigate()
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
   const inputRef = useRef<any>([]);
@@ -48,7 +48,7 @@ const VerifyEmail = () => {
         if(response.success){
           setIsAuthenticated(true)
           setUserRole('user')
-          setUser(response.data)
+          setUserData(response.data)
           setAuthLoading(false)
           navigate('/user/home')
         }

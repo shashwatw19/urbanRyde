@@ -5,9 +5,10 @@ dotenv.config()
 
 const PORT = process.env.PORT || 3000
 
-dbConnect().
-then(()=>{
-    app.listen(PORT , ()=>{
-        console.log(`server is running on the http://localhost:${PORT}`)
-    })
-})
+dbConnect()
+// then(()=>{
+//     app.listen(PORT , ()=>{
+//         console.log(`server is running on the http://localhost:${PORT}`)
+//     })
+// })
+

@@ -1,9 +1,10 @@
 import axios from "axios";
 import dotenv from 'dotenv'
+import { Captain } from "../models/captain.model";
 dotenv.config()
-type getAddressCondinatesType = {
-    ltd : string,
-    lng : string
+export type getAddressCondinatesType = {
+    lat : number,
+    lng : number
 }
 interface GooglePlacePrediction {
     description: string;
@@ -22,8 +23,8 @@ const getAddressCondinates = async(address : string) : Promise<getAddressCondina
         if (response.data.status === 'OK') {
             const location = response.data.results[ 0 ].geometry.location;
             return {
-                ltd: location.lat,
-                lng: location.lng
+                lat: location.lat ,
+                lng: location.lng 
             };
         } else {
             throw new Error('Unable to fetch coordinates');
@@ -76,7 +77,7 @@ const getAutoCompleteSuggestions = async(input: string): Promise<string[]> => {
     try {
         const response = await axios.get<GooglePlacesResponse>(url);
         if (response.data.status === 'OK') {
-            console.log("resposne from suggestions " , response)
+            
             return response.data.predictions
                 .map((prediction: GooglePlacePrediction) => prediction.description)
                 .filter((value: string) => value);
@@ -88,5 +89,28 @@ const getAutoCompleteSuggestions = async(input: string): Promise<string[]> => {
         throw err;
     }
 }
-
-export {getAddressCondinates , getDistanceTime , getAutoCompleteSuggestions}
+const getCaptainInRadius = async(lat: number, lng: number, radius: number) => {
+    try {
+        console.log("Searching for captains with:", { lat, lng, radius });
+        
+        // Now use proper GeoJSON query
+        const captains = await Captain.find({
+            location: {
+                $near: {
+                    $geometry: {
+                        type: "Point",
+                        coordinates: [lng, lat] // [longitude, latitude]
+                    },
+                    $maxDistance: radius * 1000 // radius in meters
+                }
+            }
+        });
+        
+        console.log("Found captains:", captains);
+        return captains;
+    } catch (e) {
+        console.log("error in getting captains in radius", e);
+        return [];
+    }
+};
+export {getAddressCondinates , getDistanceTime , getAutoCompleteSuggestions , getCaptainInRadius}

@@ -12,17 +12,18 @@ router.route('/registerCaptain').post([
     // Fullname validation
     body('fullname.firstname').optional().trim().if((value) => value && value.length > 0).isLength({ min: 2 }).withMessage('Last name must be at least 2 characters if provided'),
     body('fullname.lastname').optional().trim().if((value) => value && value.length > 0).isLength({ min: 2 }).withMessage('Last name must be at least 2 characters if provided'),
-    
     // Vehicle validation
+    body('vehicle.color').trim().isLength({min: 3}).withMessage('Vehicle color must be at least 3 characters long'),
+    body('vehicle.NumberPlate').trim().isLength({min: 3}).withMessage('Number plate must be at least 3 characters long'),
+    body('vehicle.capacity').isInt({min: 1}).withMessage('Vehicle capacity must be at least 1'),
+    body('vehicle.vehicleType').isIn(['car', 'moto', 'auto']).withMessage('Vehicle type must be car, moto, or auto'),
+    
     
 ] , registerCaptain )
 
 
 router.route("/profile").post([
-    body('color').trim().isLength({min: 3}).withMessage('Vehicle color must be at least 3 characters long'),
-    body('NumberPlate').trim().isLength({min: 3}).withMessage('Number plate must be at least 3 characters long'),
-    body('capacity').isInt({min: 1}).withMessage('Vehicle capacity must be at least 1'),
-    body('vehicleType').isIn(['car', 'motorcycle', 'auto']).withMessage('Vehicle type must be car, motorcycle, or auto'),
+    
     
     // Location validation (optional fields)
    

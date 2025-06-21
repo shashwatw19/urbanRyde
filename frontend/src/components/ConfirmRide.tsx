@@ -3,43 +3,47 @@ import { VehicleTypes } from './VehicleCard'
 import { FaLocationDot } from "react-icons/fa6"
 import { FaLocationPinLock } from 'react-icons/fa6'
 import { FaMoneyCheck } from 'react-icons/fa6'
-import { useState } from 'react'
 import car from "../assets/car.webp"
 import bike from "../assets/bike.webp"
 import auto from "../assets/auto.webp"
-import { useEffect } from 'react'
+import { fareType } from '../pages/HomeUser'
+import { TripType } from '../pages/HomeUser'
+import { createRide } from '../services/operations/ride/tripSetup'
+
 type ConfirmRideType = {
     vehicle : VehicleTypes,
-    setVehicle : (vehicle : VehicleTypes )=>void
+ 
     setConfirmRidePanel : (value : boolean)=>void
     setLookingForDriver : (value : boolean)=>void
+    fare : fareType,
+    trip : TripType
 }
 
-const ConfirmRide = ({vehicle , setVehicle , setConfirmRidePanel , setLookingForDriver} : ConfirmRideType) => {
-  const [ride , setRide] = useState<VehicleTypes>({
-    name : vehicle.name,
-    img : vehicle.img,
-    type : vehicle.type,
-    price : vehicle.price,
-    tags : vehicle.tags
-  })
+const ConfirmRide = ({vehicle  , setConfirmRidePanel , setLookingForDriver , fare , trip} : ConfirmRideType) => {
+  
    const getVehicleImage = () => {
     switch(vehicle.type) {
       case 'car': return car;
       case 'auto': return auto;
-      case 'bike': return bike;
+      case 'moto': return bike;
       default: return car; // fallback
     }
   }
   
 
-  const handleRidePanel = ()=>{
+  const handleConfirmRide = async()=>{
     setConfirmRidePanel(false)
     setLookingForDriver(true)
+    try{
+        const response = await createRide({pickup: trip.pickup , destination: trip.destination , vehicleType: vehicle.type!})
+        console.log("response from handleRideConfirm" , response)
+    }catch(e){
+        console.log("error from frntend in handleConfirmRide" , e )
+    }
   }
   
   return (
-    <div className='p-2'>
+    <div className='px-6 pt-2 max-w-md mx-auto'>
         <div className='flex flex-row justify-between items-start mb-4'>
             <p className='text-xl font-semibold text-black capitalize'>Confirm your ride</p>
             <div className='text-2xl text-black cursor-pointer' onClick={()=>setConfirmRidePanel(false)}><FaSortDown/></div>
@@ -66,21 +70,21 @@ const ConfirmRide = ({vehicle , setVehicle , setConfirmRidePanel , setLookingFor
             <div className='flex flex-row items-center gap-4'>
                 <FaLocationDot/>
                <div>
-                    <p className='text-lg font-semibold'>8/31</p>
-                    <p className='text-sm text-gray-700'>Vijay Nagar Indore</p>
+                    <p className='text-lg font-semibold'>{trip.pickup}</p>
+                   
                 </div>
             </div>
             <div className='flex flex-row items-center gap-4'>
                 <FaLocationPinLock/>
                <div>
-                    <p className='text-lg font-semibold'>75-C Vandana Nagar</p>
-                    <p className='text-sm text-gray-700'>Near bengali Square</p>
+                    <p className='text-lg font-semibold'>{trip.destination}</p>
+                   
                </div>
             </div>
             <div className='flex flex-row items-center gap-4'>
                 <FaMoneyCheck/>
                <div>
-                    <p className='text-lg font-bold text-green-600 '>₹{vehicle.price}</p>
+                    <p className='text-lg font-bold text-green-600 '>₹{fare[vehicle.type!]}</p>
                     <p className='text-sm text-gray-700'>Cash | UPI | Wallet</p>
                </div>
             </div>
@@ -88,7 +92,7 @@ const ConfirmRide = ({vehicle , setVehicle , setConfirmRidePanel , setLookingFor
 
         
         
-        <button onClick={()=>handleRidePanel()} className='w-full bg-green-600 text-white py-2 rounded-lg mt-6 font-semibold'>
+        <button onClick={()=>handleConfirmRide()} className='w-full bg-green-600 text-white py-2 rounded-lg mt-6 font-semibold'>
             Confirm Ride
         </button>
         <button onClick={()=>setConfirmRidePanel(false)} className='w-full bg-black text-white py-2 rounded-lg mt-2 font-semibold'>

@@ -6,9 +6,10 @@ import CaptainSignup from "./pages/CaptainSignup"
 import CaptainLogin from "./pages/CaptainLogin"
 import VerifyEmail from "./pages/VerifyEmail"
 import VerifyEmailCaptain from "./pages/VerifyEmailCaptain"
-import Riding from "./pages/Riding"
+import UserRideCompleted from "./pages/UserRideCompleted"
 import { UserProtectedWrapper } from "./pages/UserProtectedWrapper"
 import CaptainProtectedWrapper from "./pages/CaptainProtectedWrapper"
+import { UserOngoingRide } from "./pages/UserOngoingRide"
 import Home from "./pages/HomeUser"
 import HomeCaptain from "./pages/HomeCaptain"
 import { CaptainRiding } from "./pages/CaptainRiding"
@@ -34,9 +35,15 @@ function App() {
 
             <Route element={
               <UserProtectedWrapper>
-                <Riding />
+                <UserRideCompleted />
               </UserProtectedWrapper>
-            } path="/user/ride" />
+            } path="/user/ride-completed" />
+
+            <Route element={
+              <UserProtectedWrapper>
+                <UserOngoingRide />
+              </UserProtectedWrapper>
+            } path="/user/ride/:rideId?" />
 
             <Route element={
               <CaptainProtectedWrapper>
