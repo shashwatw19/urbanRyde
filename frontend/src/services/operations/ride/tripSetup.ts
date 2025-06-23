@@ -1,6 +1,7 @@
 import { apiConnector } from "../../apiConnector";
 import { RIDE } from "../../apis"
 import { RideType } from "../../../types/rideTypes";
+
 export type ConfirmRideType = {
     rideId: string,
     otp: string,
@@ -90,4 +91,26 @@ const startRide = async ({ rideId, otp , userSocketId ,setLoading , setRide}: Co
     }
 
 }
-export { getFareForTrip, createRide , startRide , confirmRide}
+
+const requestPayment = async({rideId ,userSocketId, setLoading , setRide} : Partial<ConfirmRideType>)=>{
+    if(!rideId || rideId.length ==0 ){
+        throw new Error('invalid rideId')
+    }
+    if(!userSocketId || userSocketId.length == 0){
+        throw new Error('invalid Socket id')
+    }
+    try{
+        setLoading?.(true)
+        const response = await apiConnector("POST" , RIDE.REQUEST_PAYMENT , {rideId , userSocketId} , {
+            'Content-type' : 'application/json'
+        })
+        console.log("response from requestPayment" , response)
+        return response.data.success
+    }catch(e){
+        console.log("error from requestPayment" , e)
+        throw e
+    }finally{
+        setLoading?.(false)
+    }
+}
+export { getFareForTrip, createRide , startRide , confirmRide , requestPayment}

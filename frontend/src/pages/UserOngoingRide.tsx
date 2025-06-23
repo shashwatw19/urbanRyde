@@ -1,16 +1,17 @@
 import { useContext, useEffect, useState } from 'react';
 import { RideContext } from '../context/RideContext';
 import LiveTracking from '../components/LiveTracking';
-import { FaLocationDot, FaLocationPinLock, FaMessage, FaStar, FaCar, FaClock } from 'react-icons/fa6';
-import { FaMoneyCheck } from 'react-icons/fa';
+import {  FaLocationPinLock } from 'react-icons/fa6';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
+import { SocketContext } from '../context/socketContext';
 
 const UserOngoingRide = () => {
   const navigate = useNavigate();
   const { ride, isValidRide, loading, error, clearError } = useContext(RideContext);
   const { rideId } = useParams<{ rideId?: string }>();
+  const {socket} = useContext(SocketContext)
   const [rideStartTime] = useState(new Date());
   const [elapsedTime, setElapsedTime] = useState(0);
 
@@ -20,6 +21,7 @@ const UserOngoingRide = () => {
   const handleVerifyRide = async () => {
     if (rideId) await isValidRide(rideId, 'user');
   };
+
 
   useEffect(() => {
     if (hasValidRideId) {
@@ -34,7 +36,20 @@ const UserOngoingRide = () => {
     }
   }, [error, clearError]);
 
-  // ✅ Fix elapsed time with proper state update
+  useEffect(() => {
+        if (socket && ride?._id) {
+            socket.on('Payment-Request', (data) => {
+                if(ride._id == data._id){
+                  navigate(`/user/ride-completed/${ride._id}`)
+                }
+                console.log("payment request recieved" , data)
+            });
+        return () => {
+              socket.off('Payment-Request')
+          }
+        }
+    }, [socket, ride?._id])
+
   useEffect(() => {
     const updateElapsedTime = () => {
       const now = new Date();
@@ -46,6 +61,7 @@ const UserOngoingRide = () => {
     const interval = setInterval(updateElapsedTime, 60000);
     return () => clearInterval(interval);
   }, [rideStartTime]);
+
 
   const handleMessage = () => {
     toast.info('Messaging feature coming soon');
@@ -95,8 +111,7 @@ const UserOngoingRide = () => {
   const statusDisplay = getRideStatusDisplay();
 
   return (
-    <div className="h-screen max-w-md mx-auto flex flex-col overflow-hidden p-3">
-     
+    <div className="h-screen max-w-md mx-auto flex flex-col overflow-hidden">
       <div className="flex-1 relative">
         <div className="w-full h-full">
           <LiveTracking />
@@ -115,35 +130,28 @@ const UserOngoingRide = () => {
       </div>
 
       
-      <div className="bg-white border-t border-gray-200 max-h-[50vh] overflow-y-auto">
-        {/* Handle */}
-        <div className="flex justify-center py-1">
-          <div className="w-8 h-1 bg-gray-300 rounded-full"></div>
-        </div>
-
-        <div className="px-3 pb-3">
-        
-         
-
-          {/* ✅ Trip Details - Compact spacing */}
-          <div className="space-y-2 mb-3">
-          
-           
-
-            {/* Destination */}
-            <div className="flex items-start gap-2 p-2 bg-gray-50 rounded-lg">
-              <FaLocationPinLock className="text-gray-800 text-sm mt-1 flex-shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-gray-600">Destination</p>
-                <p className="text-sm font-semibold text-gray-900 truncate">{ride?.destination}</p>
+      <div className=" border-t border-gray-200 max-h-[50vh] overflow-y-auto "
+       style={{height: "calc(100vh - 400px)"}}>
+        <div className=" pb-3 flex flex-col justify-between gap-6  p-3">
+            <div className="space-y-2 ">
+              <div className="flex items-start gap-2  bg-gray-50 rounded-lg">
+                <FaLocationPinLock className="text-gray-800 text-sm mt-1 flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-gray-600">Pickup</p>
+                  <p className="text-sm font-semibold text-gray-900 truncate">{ride?.pickup}</p>
+                </div>
               </div>
             </div>
-          </div>
-
-          {/* ✅ Ride Stats - Compact grid */}
-         
-          {/* ✅ Status Information - Compact */}
-          <div className={`${statusDisplay.bgColor} border border-gray-200 rounded-lg p-2 mb-3`}>
+            <div className="space-y-2 ">
+              <div className="flex items-start gap-2  bg-gray-50 rounded-lg">
+                <FaLocationPinLock className="text-gray-800 text-sm mt-1 flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-gray-600">Destination</p>
+                  <p className="text-sm font-semibold text-gray-900 truncate">{ride?.destination}</p>
+                </div>
+              </div>
+            </div>
+            <div className={`${statusDisplay.bgColor} border border-gray-200 rounded-lg p-2 mb-3`}>
             <div className="text-center">
               <p className={`text-sm font-semibold ${statusDisplay.color}`}>
                 {statusDisplay.text}
@@ -155,9 +163,6 @@ const UserOngoingRide = () => {
               )}
             </div>
           </div>
-
-        
-          
         </div>
       </div>
     </div>

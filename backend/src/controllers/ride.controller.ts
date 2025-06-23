@@ -189,7 +189,8 @@ const isValidRideUser = asyncHandler(async(req : Request  , res : Response)=>{
     const userId = req.user?._id
     const {rideId} = req.body
     console.log("rideId " , rideId)
-    const validRide = await Ride.findOne({_id :rideId , user : userId })
+    const validRide = await Ride.findOne({_id :rideId , user : userId }).
+    populate('user').select('-pasword').populate('captain').select('-password')
 
     if(!validRide){
         throw new ApiError(404 , 'ride not found')
@@ -210,7 +211,8 @@ const isValidRideCaptain = asyncHandler(async(req : Request  , res : Response)=>
     const captainId = req.user?._id
     const {rideId} = req.body
 
-    const validRide = await Ride.findOne({_id :rideId , captain : captainId })
+    const validRide = await Ride.findOne({_id :rideId , captain : captainId }).
+    populate('user').select('-pasword').populate('captain').select('-password')
 
     if(!validRide){
         throw new ApiError(404 , ' ride not found')
@@ -220,5 +222,32 @@ const isValidRideCaptain = asyncHandler(async(req : Request  , res : Response)=>
         new ApiResponse(200 , 'valid ride' ,validRide)
     )
 })
-export {createRide , getFareForTrip, startRide  , confirmRide , isValidRideUser , isValidRideCaptain}
+const paymentRequest = asyncHandler(async(req : Request , res : Response)=>{
+    const errors : Result = validationResult(req)
+    if(!errors.isEmpty()){
+        const errorMessage : string[] = errors.array()
+        throw new ApiError(400 , 'invalid fields' , false , errorMessage)
+    }
+    const {rideId  , userSocketId } = req.body
+
+    const ride = await Ride.findById(rideId).populate('user').select('-password').populate('captain').select('-password')
+
+    if(!ride || ride.status != 'ongoing'){
+        throw new ApiError(404 , 'invalid ride')
+    }
+
+    ride.status = 'completed'
+
+    await ride.save({validateBeforeSave : false})
+    if (userSocketId) {
+            sendMessageToSocketId(userSocketId, 'Payment-Request', ride);
+    } else {
+            console.warn('userSocketId is missing, cannot send socket message.');
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200 , 'ride is valdi and request for payment sent to user')
+    )
+})
+export {createRide , getFareForTrip, startRide  , confirmRide , isValidRideUser , isValidRideCaptain , paymentRequest}
 

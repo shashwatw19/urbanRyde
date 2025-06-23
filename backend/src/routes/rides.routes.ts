@@ -1,7 +1,7 @@
 import Router from 'express'
 import {body , query} from 'express-validator'
 import { verifyJwt } from '../middleware/auth.midleware'
-import {createRide , getFareForTrip , confirmRide , startRide , isValidRideUser , isValidRideCaptain} from '../controllers/ride.controller'
+import {createRide , getFareForTrip , confirmRide , startRide , isValidRideUser , isValidRideCaptain , paymentRequest} from '../controllers/ride.controller'
 import { captainVerify } from '../middleware/captainAuth.middleware'
 const router = Router()
 
@@ -37,4 +37,11 @@ router.route('/verify/user').post([
 router.route('/verify/captain').post([
     body('rideId').isString().withMessage('rideId is required and must be a string')
 ] , captainVerify , isValidRideCaptain)
+
+
+router.route('/request-payment').post([
+    body('rideId').isString().withMessage('rideId is required and must be a string'),
+   
+    body('userSocketId').isString().withMessage('userSocketId is required and must be a string')
+] , captainVerify , paymentRequest)
 export default router

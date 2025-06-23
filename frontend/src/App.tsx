@@ -37,7 +37,7 @@ function App() {
               <UserProtectedWrapper>
                 <UserRideCompleted />
               </UserProtectedWrapper>
-            } path="/user/ride-completed" />
+            } path="/user/ride-completed/:rideId?" />
 
             <Route element={
               <UserProtectedWrapper>
@@ -55,7 +55,7 @@ function App() {
               <CaptainProtectedWrapper>
                 <CaptainRiding />
               </CaptainProtectedWrapper>
-            } path="/captain/ride" />
+            } path="/captain/ride/:rideId?" />
           </Routes>
           
       

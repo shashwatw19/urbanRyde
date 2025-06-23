@@ -39,9 +39,7 @@ const ConfirmRidePopUp = ({ setConfirmRidePopup, setRidePopup }: ConfirmRidePopU
         try {
             const response = await startRide(data)
             if (response) {
-                navigate('/captain/ride')
-                
-
+                navigate(`/captain/ride/${ride?._id}`)
             } else {
                 toast.error('invalid ride or otp')
             }

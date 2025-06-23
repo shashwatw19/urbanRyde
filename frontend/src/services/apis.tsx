@@ -26,5 +26,6 @@ export const RIDE = {
     CONFIRM_RIDE : BASE_URL + "/ride/confirm-ride",
     START_RIDE : BASE_URL + "/ride/start-ride",
     VERIFY_RIDE_USER : BASE_URL + "/ride/verify/user",
-    VERIFY_RIDE_CAPTAIN : BASE_URL + "/ride/verify/captain"
+    VERIFY_RIDE_CAPTAIN : BASE_URL + "/ride/verify/captain",
+    REQUEST_PAYMENT : BASE_URL + "/ride/request-payment"
 }
