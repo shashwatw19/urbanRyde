@@ -1,5 +1,5 @@
 import { FaRoad, FaMoneyCheck } from "react-icons/fa"
-import { FaLocationDot, FaLocationPinLock, FaSort } from "react-icons/fa6"
+import { FaLocationDot, FaLocationPinLock } from "react-icons/fa6"
 import { Link } from "react-router-dom"
 import { FaSortDown } from "react-icons/fa"
 import { useContext, useEffect } from "react"
@@ -22,7 +22,7 @@ const RideCompleted = ({ setCompleteRide }: RideCompleted) => {
     const [paymentCompleted, setPaymentCompleted] = useState<boolean>(false)
     const [waitingForPayment, setWaitingForPayment] = useState<boolean>(false)
     const [requestingPayment, setRequestingPayment] = useState<boolean>(false)
-
+    const {handleCaptainData} = useContext(UserDataContext)
     useEffect(() => {
         if (socket && ride?._id) {
             socket.on('payment-completed', (data) => {
@@ -31,7 +31,8 @@ const RideCompleted = ({ setCompleteRide }: RideCompleted) => {
                     setPaymentCompleted(true);
                     setWaitingForPayment(false);
                     setPaymentRequested(true);
-                    toast.success('✅ Payment received! You can now finish the ride.');
+                    toast.success('Payment received! You can now finish the ride.');
+                    handleCaptainData(ride.fare! , 1 , ride?.distance)
                 }
             });
             socket.on('payment-failed', (data) => {
@@ -115,7 +116,7 @@ const RideCompleted = ({ setCompleteRide }: RideCompleted) => {
     }
     const paymentStatus = getPaymentStatus()
     return (
-        <div className="p-3 max-w-md min-h-screen bg-white flex flex-col justify-between">
+        <div className="p-5 max-w-md min-h-screen bg-white flex flex-col justify-between">
             <div>
                 <div className="flex items-start justify-between gap-2 mb-4">
                     <h2 className="text-xl font-bold text-gray-900">
@@ -124,7 +125,7 @@ const RideCompleted = ({ setCompleteRide }: RideCompleted) => {
                     <FaSortDown onClick={() => setCompleteRide(false)} className="text-lg" />
                 </div>
 
-                <div className="flex flex-col justify-start gap-3 flex-grow">
+                <div className="flex flex-col justify-start gap-6 flex-grow mt-5">
                     <div className="border border-green-100 rounded-lg">
                         <div className="flex items-center gap-2 p-2">
                             <div className="w-7 h-7 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center">
@@ -197,13 +198,13 @@ const RideCompleted = ({ setCompleteRide }: RideCompleted) => {
             </div>
             <form className="flex flex-col justify-between gap-1.5 p-1.5 mb-5">
                 {/* Payment Request Button */}
-                {!paymentCompleted && (
+                 
                     <>
-                        <button
+                        {!paymentCompleted && <button
                             type="button"
                             onClick={handleRequestPayment}
                             disabled={requestingPayment || waitingForPayment}
-                            className={`w-full py-1.5 rounded-lg font-semibold text-sm bg-blue-700 text-white`}
+                            className={`w-full p-2 rounded-lg font-semibold text-base bg-blue-700 text-white`}
                         >
                             {requestingPayment ? (
                                 <span className="flex items-center justify-center gap-2">
@@ -217,19 +218,19 @@ const RideCompleted = ({ setCompleteRide }: RideCompleted) => {
                             ) : (
                                 'Request Payment'
                             )}
-                        </button>
+                        </button>}
                         {/* Finish Ride Button */}
                         <div className="flex items-center justify-between gap-2 w-full">
                             {paymentCompleted ? (
                                 <Link className="w-full" to={"/captain/home"}>
-                                    <button className="w-full bg-green-600 hover:bg-green-700 text-white py-1.5 rounded-lg font-semibold text-sm transition-colors duration-200">
+                                    <button className="w-full bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg font-semibold text-base transition-colors duration-200">
                                         Finish Ride ✅
                                     </button>
                                 </Link>
                             ) : (
                                 <button
                                     disabled
-                                    className="w-full bg-gray-400 text-white py-1.5 rounded-lg font-semibold text-sm cursor-not-allowed opacity-70"
+                                    className="w-full bg-gray-400 text-white p-2 rounded-lg font-semibold text-base cursor-not-allowed opacity-70"
                                 >
                                     Finish Ride (Payment Required)
                                 </button>
@@ -248,7 +249,7 @@ const RideCompleted = ({ setCompleteRide }: RideCompleted) => {
                                     : 'Request payment from user before finishing ride'}
                         </p>
                     </>
-                )}
+                
             </form>
 
         </div>

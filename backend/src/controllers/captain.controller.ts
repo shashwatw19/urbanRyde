@@ -44,7 +44,8 @@ const registerCaptain = asyncHandler(async(req : Request , res : Response )=>{
             capacity : vehicle.capacity,
             vehicleType : vehicle.vehicleType
         },
-        password : password
+        password : password,
+        status : 'active'
     })
 
     if(!newUser){
@@ -83,7 +84,10 @@ const loginCaptain = asyncHandler(async(req : Request , res : Response)=>{
     if(!await validUser.comparePassword(password)){
         throw new ApiError(401 , 'Invalid Password')
     }
-
+    
+    validUser.status = 'active'
+    await validUser.save({validateBeforeSave : false})
+    
     const accessToken = validUser.generateAccessToken()
     const options = {
         secure : true,

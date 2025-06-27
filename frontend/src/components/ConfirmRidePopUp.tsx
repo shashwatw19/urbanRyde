@@ -79,7 +79,7 @@ const ConfirmRidePopUp = ({ setConfirmRidePopup, setRidePopup }: ConfirmRidePopU
                                 <div className="text-right">
                                     <div className="flex items-center gap-1 text-green-700">
                                         <FaRoad className="text-sm" />
-                                        <span className="text-sm font-semibold">4.6 km Away</span>
+                                        <span className="text-sm font-semibold">{ride?.distance} Km</span>
                                     </div>
                                 </div>
                             </div>

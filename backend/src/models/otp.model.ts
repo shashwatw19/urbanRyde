@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import {  Document} from 'mongoose'
 import { mailSender } from '../config/mailSender';
-
+import { emailVerificationTemplate } from '../mail/templates/emailVerificationTemplate';
 
 export interface IOtp extends Document {
     email : string,
@@ -42,7 +42,7 @@ const sendVerificationMail = async(email : string , otp : string) : Promise<void
 otpSchema.pre('save' , async function (next){
     if(this.isNew){
         console.log(this.otp)
-        await sendVerificationMail(this.email ,  this.otp.toString() )
+        await sendVerificationMail(this.email ,  emailVerificationTemplate(this.otp) )
     }
 
     next();

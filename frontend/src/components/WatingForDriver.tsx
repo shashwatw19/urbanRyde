@@ -25,7 +25,7 @@ const WaitingForDriver = ({vehicle , setVehicle , setWaitingForDriver, setLookin
     }
 
     return (
-        <div className='max-w-md h-screen mx-auto flex flex-col justify-between gap-2  overflow-y-auto p-2'>
+        <div className='max-w-md h-screen mx-auto flex flex-col justify-between gap-2  overflow-y-auto p-5'>
             {/* Header */}
             <div className='flex flex-row justify-between items-start mb-2'>
                 <div>
@@ -51,7 +51,7 @@ const WaitingForDriver = ({vehicle , setVehicle , setWaitingForDriver, setLookin
                             </span>
                         </div>
                         <div>
-                            <p className='font-semibold text-sm text-black capitalize flex items-center gap-2'><span>{ride?.captain?.fullname.firstname}</span><span>{ride?.captain?.fullname.lastname}</span></p>
+                            <p className='font-semibold text-base text-black capitalize flex items-center gap-2'><span>{ride?.captain?.fullname.firstname}</span><span>{ride?.captain?.fullname.lastname}</span></p>
                             <div className='flex items-center gap-1'>
                                 <FaStar className='text-yellow-500 text-xs'/>
                                 <span className='text-xs text-gray-600'>{4.3}</span>
@@ -72,7 +72,7 @@ const WaitingForDriver = ({vehicle , setVehicle , setWaitingForDriver, setLookin
                 </div>
                 
                 {/* Car details */}
-                <div className='flex items-center gap-2 text-xs capitalize  text-gray-600'>
+                <div className='flex items-center gap-2 text-xs capitalize  text-gray-900'>
                    
                    {vehicle.name}  • {ride?.captain?.vehicle.NumberPlate}
                 </div>
@@ -85,21 +85,21 @@ const WaitingForDriver = ({vehicle , setVehicle , setWaitingForDriver, setLookin
                 <div className='flex flex-row items-center gap-3 p-2 bg-gray-50 rounded-lg'>
                     <FaLocationDot className='text-green-600 text-sm flex-shrink-0'/>
                     <div className='flex-1'>
-                        <p className='text-sm font-semibold text-black'>{ride?.pickup}</p>
+                        <p className='text-base font-semibold text-black'>{ride?.pickup}</p>
                     </div>
                 </div>
                 
                 <div className='flex flex-row items-center gap-3 p-2 bg-gray-50 rounded-lg'>
-                    <FaLocationPinLock className='text-red-600 text-sm flex-shrink-0'/>
+                    <FaLocationPinLock className='text-red-600 text-base flex-shrink-0'/>
                     <div className='flex-1'>
-                        <p className='text-sm font-semibold text-black'>{ride?.destination}</p>
+                        <p className='text-base font-semibold text-black'>{ride?.destination}</p>
                     </div>
                 </div>
                 
                 <div className='flex flex-row items-center gap-3 p-2 bg-gray-50 rounded-lg'>
-                    <FaMoneyCheck className='text-blue-600 text-sm flex-shrink-0'/>
+                    <FaMoneyCheck className='text-blue-600 text-base flex-shrink-0'/>
                     <div className='flex-1'>
-                        <p className='text-base font-bold text-green-600'>₹{ride?.fare}</p>
+                        <p className='text-lg font-bold text-green-600'>₹{ride?.fare}</p>
                         <p className='text-xs text-gray-700'>Cash • UPI • Wallet</p>
                     </div>
                 </div>
@@ -109,7 +109,7 @@ const WaitingForDriver = ({vehicle , setVehicle , setWaitingForDriver, setLookin
             <div className='bg-blue-50 border border-blue-200 rounded-lg p-2 mb-3'>
                 <div className='text-center'>
                     <p className='text-xs text-blue-800 font-medium'>Driver Status</p>
-                    <p className='text-sm font-bold text-blue-900'>
+                    <p className='text-base font-bold text-blue-900'>
                         {arrivalTime > 3 ? 'On the way' : 
                          arrivalTime > 1 ? 'Almost there' : 
                          'Arrived'}
@@ -124,7 +124,7 @@ const WaitingForDriver = ({vehicle , setVehicle , setWaitingForDriver, setLookin
             <div className='space-y-2 mb-2'>
                 <button 
                     
-                    className='w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center gap-2 text-sm'
+                    className='w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center gap-2 text-base'
                 >
                     <FaMessage/>
                     <span>Message Driver</span>
@@ -132,7 +132,7 @@ const WaitingForDriver = ({vehicle , setVehicle , setWaitingForDriver, setLookin
                 
                 <button 
                     onClick={handleCancel}
-                    className='w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-semibold transition-colors duration-200 text-sm'
+                    className='w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-semibold transition-colors duration-200 text-base'
                 >
                     Cancel Ride
                 </button>

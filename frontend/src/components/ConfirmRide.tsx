@@ -43,7 +43,7 @@ const ConfirmRide = ({vehicle  , setConfirmRidePanel , setLookingForDriver , far
   }
   
   return (
-    <div className='px-6 pt-2 max-w-md mx-auto'>
+    <div className='p-5  max-w-md mx-auto'>
         <div className='flex flex-row justify-between items-start mb-4'>
             <p className='text-xl font-semibold text-black capitalize'>Confirm your ride</p>
             <div className='text-2xl text-black cursor-pointer' onClick={()=>setConfirmRidePanel(false)}><FaSortDown/></div>

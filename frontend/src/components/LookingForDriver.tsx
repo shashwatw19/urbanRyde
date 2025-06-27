@@ -35,7 +35,7 @@ const LookingForDriver = ({vehicle , setVehicle , setWaitingForDriver, setLookin
     }
    
     return (
-        <div className='px-6 pt-2 max-w-md mx-auto h-screen flex flex-col gap-2 overflow-y-auto'>
+        <div className='px-6 pt-4 max-w-md mx-auto h-screen flex flex-col gap-2 overflow-y-auto'>
             {/* Header */}
             <div className='flex flex-row justify-between items-start'>
                 <div>
@@ -46,7 +46,7 @@ const LookingForDriver = ({vehicle , setVehicle , setWaitingForDriver, setLookin
                 <p className='text-2xl ' onClick={()=>setLookingForDriver(false)} ><FaSortDown/></p>
             </div>
 
-        <div className='flex flex-col  justify-start'>
+            <div className='flex flex-col  justify-start'>
               
                 <div className='flex justify-center '>
                     <img 
@@ -68,16 +68,12 @@ const LookingForDriver = ({vehicle , setVehicle , setWaitingForDriver, setLookin
                 </div>
             </div>
             </div>
-
-           
-           
-
             {/* Trip Details */}
-            <div className='flex flex-col gap-3 mb-6'>
+            <div className='flex flex-col gap-3 mb-6 '>
                 <div className='flex flex-row items-center gap-4 p-1 bg-gray-50 rounded-lg'>
                     <FaLocationDot className='text-black text-lg flex-shrink-0'/>
                     <div className='flex-1'>
-                        <p className='text-base font-semibold text-black'>{trip.pickup}</p>
+                        <p className='text-base font-semibold text-black'>{trip.pickup }</p>
                         
                     </div>
                 </div>
@@ -112,10 +108,7 @@ const LookingForDriver = ({vehicle , setVehicle , setWaitingForDriver, setLookin
        
             <div className='space-y-3'>
                 <button 
-                    onClick={() => {
-                        setWaitingForDriver(true)
-                        setLookingForDriver?.(false)
-                    }}
+                    disabled={true}
                     className='w-full   bg-green-600 text-white py-2 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center gap-2'
                 >
                     <span className='capitalize animate-pulse'>Looking for driver</span>
@@ -127,7 +120,7 @@ const LookingForDriver = ({vehicle , setVehicle , setWaitingForDriver, setLookin
                     }}
                     className='w-full  bg-red-600 text-white py-2 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center gap-2'
                 >
-                    <span className='capitalize'>Cancle Ride</span>
+                    <span className='capitalize'>Cancel Ride</span>
                 </button>
                 
               

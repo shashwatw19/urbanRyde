@@ -29,3 +29,9 @@ export const RIDE = {
     VERIFY_RIDE_CAPTAIN : BASE_URL + "/ride/verify/captain",
     REQUEST_PAYMENT : BASE_URL + "/ride/request-payment"
 }
+
+export const PAYMENT = {
+    CAPTURE_PAYMENT : BASE_URL + "/payment/capture-payment",
+    VERIFY_PAYMENT :  BASE_URL + "/payment/verify-payment",
+    SEND_RIDE_ENDED_MAIL : BASE_URL + "/payment/ride-ended-mail"
+}

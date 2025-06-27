@@ -1,6 +1,6 @@
 import {getDistanceTime} from '../services/map.services'
 
-const getFare = async(pickup : string , destination : string)=>{
+const getFare = async(pickup : string , destination : string , )=>{
     try{
         if(!pickup || !destination){
         throw new Error('Pickup and destination are required')

@@ -40,16 +40,16 @@ const RidePopUP = ({setRidePopup , setConfirmRidePopup }:RidePopUPType) => {
       <div className="flex flex-col items-start gap-3 ">
         <div className="flex flex-row items-center gap-4 w-full bg-gray-50 py-2 px-1 rounded-md">
           <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center flex-shrink-0">
-            <span className="text-lg font-bold text-white">{ride?.user?.fullname.firstname[0]}</span>
+            <span className="text-lg font-bold text-white capitalize">{ride?.user?.fullname.firstname[0]}</span>
           </div>
 
           {/* Driver Details */}
           <div className="flex-1 w-full flex flex-row justify-between ">
-            <p className="font-semibold flex flex-row gap-2  text-gray-900"><span>{ride?.user?.fullname.firstname}</span><span>{ride?.user?.fullname.lastname}</span></p>
+            <p className="font-semibold flex flex-row gap-2  text-gray-900 capitalize"><span>{ride?.user?.fullname.firstname}</span><span>{ride?.user?.fullname.lastname}</span></p>
 
             <div className="flex items-center font-semibold gap-1">
               <FaRoad className="text-gray-500 text-base" />
-              <span className="text-base text-gray-500">4.6 kms away</span>
+              <span className="text-base text-gray-500">{ride?.distance} Km</span>
             </div>
           </div>
         </div>
@@ -70,7 +70,7 @@ const RidePopUP = ({setRidePopup , setConfirmRidePopup }:RidePopUPType) => {
         <div className="flex flex-row items-center gap-4 px-3">
           <FaMoneyCheck />
           <div>
-            <p className="text-base font-bold text-green-600 ">{ride?.fare}</p>
+            <p className="text-base font-bold text-green-600 ">₹{ride?.fare}</p>
             <p className="text-sm text-gray-700">Cash | UPI | Wallet</p>
           </div>
         </div>

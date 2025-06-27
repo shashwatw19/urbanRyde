@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import { Model } from 'mongoose'
 
-interface IUser extends Document {
+export interface IUser extends Document {
     fullname : {
         firstname : string,
         lastname : string

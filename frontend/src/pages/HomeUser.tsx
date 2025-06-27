@@ -335,10 +335,10 @@ const handleWatingForDriver = ()=>{
       }
     }, [socket, userData]); 
  return (
-    <div className="relative overflow-hidden"> 
+    <div className="overflow-hidden"> 
       
 
-      <div className="h-screen w-full" onClick={()=>setVehiclePanel(false)}> 
+      <div className="h-screen" onClick={()=>setVehiclePanel(false)}> 
         <LiveTracking/>
        
         <p className="absolute top-3 left-3 px-2 py-1 text-lg font-bold uppercase text-gray-800 bg-white/80 rounded-lg backdrop-blur-sm"> 
@@ -346,7 +346,7 @@ const handleWatingForDriver = ()=>{
         </p>
       </div>
 
-      <div className="h-screen flex flex-col justify-end absolute top-0 w-full">
+      <div className="h-screen flex flex-col justify-end absolute top-0 w-full ">
         
   
         <div className="bg-white px-3 py-4 h-[30%] relative"> 
@@ -395,7 +395,7 @@ const handleWatingForDriver = ()=>{
     
             <button 
               onClick={()=>handleLeaveNow()} 
-              className="bg-gray-900 font-semibold rounded-lg px-4 py-2.5 w-full text-sm text-white flex items-center justify-center gap-2 mt-2 " 
+              className="bg-gray-900 font-semibold rounded-lg px-4 py-2.5 w-full text-sm text-white flex items-center justify-center gap-2 mt-5 " 
             >
               <FaRegClock className="text-sm"/>
               Leave now

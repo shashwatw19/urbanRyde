@@ -10,6 +10,7 @@ import { getAddressCondinatesType } from "../services/map.services";
 import { sendMessageToSocketId } from "../socket";
 import mongoose from "mongoose";
 import { User } from "../models/user.model";
+import { getDistanceTime } from "../services/map.services";
 
 export type RideType = {
     user : string,
@@ -39,13 +40,19 @@ const createRide = asyncHandler(async(req : Request , res : Response)=>{
         throw new ApiError(500, "Failed to calculate fare");
     }
     const rideFare: number = fare[vehicleType as keyof typeof fare];
+    
+    const distanceTime = await getDistanceTime(pickup, destination);
+
+    console.log("distance time " , distanceTime)
     const newRide = await Ride.create({
         user : req.user?._id,
         pickup,
         destination,
         vehicleType,
         fare: rideFare,
-        otp: generateOtp()
+        otp: generateOtp(),
+        distance : parseFloat((distanceTime.distance.value / 1000).toFixed(2)),
+        duration : parseFloat((distanceTime.duration.value/60).toFixed(2))
     });
 
     res.status(201).json(
@@ -54,16 +61,20 @@ const createRide = asyncHandler(async(req : Request , res : Response)=>{
 
     // ride has been created , now finding captains near the user
     const cordinates : getAddressCondinatesType = await getAddressCondinates(pickup)
-   
+    
     const captainsNearUser = await getCaptainInRadius(cordinates.lat , cordinates.lng , 2);
 
     newRide.otp  = undefined
 
 
     const ride = await Ride.findById(newRide._id).populate('user').select('-otp -password')
-    captainsNearUser?.map((captain)=>{
-        sendMessageToSocketId(captain.socketId , 'New-Ride' , ride)
-    })
+
+    // sends socket message to captain who are active and has a vehicle type which user has choosed for ride
+    captainsNearUser
+        ?.filter((captain) => captain.vehicle?.vehicleType === vehicleType && captain.status == 'active')
+        .map((captain) => {
+            sendMessageToSocketId(captain.socketId, 'New-Ride', ride);
+        });
 
     console.log("captainsNear Me" , captainsNearUser)
 })
@@ -177,7 +188,6 @@ const startRide = asyncHandler(async (req: Request, res: Response) => {
         throw new ApiError(500, 'Failed to confirm ride');
     }
 });
-
 const isValidRideUser = asyncHandler(async(req : Request  , res : Response)=>{
     const errors : Result = validationResult(req)
 
@@ -249,5 +259,6 @@ const paymentRequest = asyncHandler(async(req : Request , res : Response)=>{
         new ApiResponse(200 , 'ride is valdi and request for payment sent to user')
     )
 })
+
 export {createRide , getFareForTrip, startRide  , confirmRide , isValidRideUser , isValidRideCaptain , paymentRequest}
 

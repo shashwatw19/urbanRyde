@@ -5,7 +5,7 @@ import { Document } from 'mongoose'
 import jwt from 'jsonwebtoken'
 dotenv.config()
 
-interface ICaptain extends Document {
+export interface ICaptain extends Document {
     fullname : {
         firstname : string,
         lastname : string

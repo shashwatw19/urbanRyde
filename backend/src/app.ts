@@ -5,7 +5,7 @@ const app = express();
 
 
 app.use(cors({
-    origin : ['http://localhost:5173','https://530pz896-5173.inc1.devtunnels.ms'],
+    origin : ['http://localhost:5173','https://7k2mt4bg-5173.inc1.devtunnels.ms'],
     credentials : true
 }))
 
@@ -22,11 +22,13 @@ import userRoutes from '../src/routes/user.routes'
 import captainRoutes from '../src/routes/captain.routes'
 import mapRoutes from "../src/routes/map.routes"
 import rideRoutes from "../src/routes/rides.routes"
+import paymentRoutes from "../src/routes/payment.routes"
 app.use('/api/v1/otp' , otpRoute)
 app.use('/api/v1/user' , userRoutes)
 app.use('/api/v1/captain' , captainRoutes)
 app.use('/api/v1/map' ,mapRoutes)
 app.use('/api/v1/ride' , rideRoutes)
+app.use("/api/v1/payment" , paymentRoutes)
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     const statusCode = err.statusCode || 500;
     

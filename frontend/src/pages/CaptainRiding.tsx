@@ -93,19 +93,20 @@ const CaptainRiding = () => {
         );
     }
     return <div className="h-screen flex flex-col max-w-md mx-auto">
-        <div className="h-[400px] relative">
+        <div className="h-4/5 relative">
             <LiveTracking />
         </div>
         
         <div
             onClick={() => setCompleteRide(true)}
-            className="bg-yellow-400 flex flex-col relative justify-center"
+            className="bg-yellow-400 flex flex-col h-1/5 relative justify-around"
             style={{
-            height: "calc(100vh - 400px)",
+          
             background: "linear-gradient(180deg, #fde047 0%, #facc15 100%)"
             }}
         >
-            <FaSortDown className="absolute top-0 left-[50%] text-xl" />
+            <div className="">
+                <FaSortDown className="absolute top-0 left-[50%] text-xl" />
             <div className="flex flex-row justify-between items-center p-2 gap-1">
             <div className="flex flex-row items-center gap-1">
                 <FaRoad className="text-lg text-gray-900" />
@@ -113,26 +114,32 @@ const CaptainRiding = () => {
             </div>
             <button
                 onClick={() => setCompleteRide(true)}
-                className="bg-green-600 py-1.5 px-3 text-white rounded-lg font-semibold text-sm"
+                className="bg-green-600 p-2 text-white rounded-lg w-[40%] font-semibold text-base"
             >
                 Complete Ride
             </button>
             </div>
+            </div>
+           <div>
+            
             <div className="px-2 pb-2 space-y-2">
             <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-md">
                 <div className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0"></div>
                 <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-red-700">Destination</p>
-                <p className="text-xs font-semibold text-gray-900 truncate">
+                <p className="text-sm font-medium text-red-700">Destination</p>
+                <p className="text-base font-semibold text-gray-900 truncate">
                     {ride?.destination || "Loading destination..."}
                 </p>
                 </div>
             </div>
+            
+          
             </div>
+           </div>
         </div>
         <div className={`bg-green-50 border border-gray-200  p-2 mb-3`}>
             <div className="text-center">
-                <p className={`text-sm font-semibold text-green-500 capitalize`}>
+                <p className={`text-base font-semibold text-green-500 capitalize`}>
                     Ride in Progress
                 </p>
                 {ride?.status === 'ongoing' && (

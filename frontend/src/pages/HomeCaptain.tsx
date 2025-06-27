@@ -8,13 +8,14 @@ import { SocketContext } from "../context/socketContext";
 import { RideType } from "../types/rideTypes";
 import LiveTracking from "../components/LiveTracking";
 import { RideContext } from "../context/RideContext";
+import { UserDataContext } from "../context/UserContext";
 
 const HomeCaptain = () => {
   const [ridePopup , setRidePopup] = useState<boolean>(false);
   const ridePopUpRef = useRef(null)
   const [confirmRidePopup , setConfirmRidePopup] = useState<boolean>(false);
-  const {userData} = useContext(AuthDataContext)
-
+  const {userData } = useContext(AuthDataContext)
+  
   const confirmRidePopupRef = useRef(null)
   const handleRidePopUp = ()=>{
   if(ridePopup){
@@ -117,14 +118,14 @@ const handleConfirmRidePopUp = ()=>{
         {/* Map Section */}
         <div className="h-3/5 w-full relative ">
             <LiveTracking/>
-            <p className="absolute top-2 flex items-center  px-3 py-1.5 text-xl font-bold uppercase text-gray-800 rounded-xl ">
+            <p className="absolute top-2 flex items-center  p-3 text-2xl font-bold  text-gray-800 rounded-xl ">
               UrbanRyde
             </p>
         </div>
        
         {/* Content Section */}
         
-        <div className="h-2/5 ">
+        <div className="h-2/5">
             <CaptainDetails/>
 
             <div ref={ridePopUpRef} className="fixed w-full bottom-0 translate-y-full  z-10 px-3 py-8  bg-white">

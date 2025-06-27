@@ -89,7 +89,7 @@ const getAutoCompleteSuggestions = async(input: string): Promise<string[]> => {
         throw err;
     }
 }
-const getCaptainInRadius = async(lat: number, lng: number, radius: number) => {
+const getCaptainInRadius = async(lat: number, lng: number, radius: number ) => {
     try {
         console.log("Searching for captains with:", { lat, lng, radius });
         
@@ -104,7 +104,7 @@ const getCaptainInRadius = async(lat: number, lng: number, radius: number) => {
                     $maxDistance: radius * 1000 // radius in meters
                 }
             }
-        });
+        }).select('-password');
         
         console.log("Found captains:", captains);
         return captains;

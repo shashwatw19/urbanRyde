@@ -6,7 +6,7 @@ import { Marker } from '@react-google-maps/api'
 
 const containerStyle = {
   width: '100%',
-  height: '400px',
+  height: '100%',
   margin: 'auto',
   padding: '5px',
   borderRadius: '10px',
@@ -72,7 +72,7 @@ const LiveTracking = ()=>{
   }, [map]); // Add map to dependencies
 
   return isLoaded ? (
-    <div className='w-full '>
+    <div className='w-full h-full'>
         <GoogleMap 
           mapContainerStyle={containerStyle}
           center={currentPosition} // Use currentPosition instead of center

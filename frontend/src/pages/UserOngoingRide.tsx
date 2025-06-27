@@ -112,12 +112,8 @@ const UserOngoingRide = () => {
 
   return (
     <div className="h-screen max-w-md mx-auto flex flex-col overflow-hidden">
-      <div className="flex-1 relative">
-        <div className="w-full h-full">
-          <LiveTracking />
-        </div>
-
-        
+      <div className="h-3/5 relative">
+        <LiveTracking />
         <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm rounded-lg px-2 py-1">
           <h1 className="text-sm font-bold text-gray-800">UrbanRyde</h1>
         </div>
@@ -130,38 +126,37 @@ const UserOngoingRide = () => {
       </div>
 
       
-      <div className=" border-t border-gray-200 max-h-[50vh] overflow-y-auto "
-       style={{height: "calc(100vh - 400px)"}}>
-        <div className=" pb-3 flex flex-col justify-between gap-6  p-3">
-            <div className="space-y-2 ">
-              <div className="flex items-start gap-2  bg-gray-50 rounded-lg">
-                <FaLocationPinLock className="text-gray-800 text-sm mt-1 flex-shrink-0" />
+      <div className="bg-white overflow-y-hidden h-2/5">
+        <div className="flex flex-col justify-between gap-6 mt-3">
+            <div className="space-y-2 p-3 ">
+              <div className="flex items-start gap-2 rounded-lg">
+                <FaLocationPinLock className="text-gray-800 text-base mt-1 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium text-gray-600">Pickup</p>
-                  <p className="text-sm font-semibold text-gray-900 truncate">{ride?.pickup}</p>
+                  <p className="text-base font-semibold text-gray-900 truncate">{ride?.pickup}</p>
                 </div>
               </div>
             </div>
-            <div className="space-y-2 ">
+            <div className="space-y-2 p-3">
               <div className="flex items-start gap-2  bg-gray-50 rounded-lg">
-                <FaLocationPinLock className="text-gray-800 text-sm mt-1 flex-shrink-0" />
+                <FaLocationPinLock className="text-gray-800 text-base mt-1 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium text-gray-600">Destination</p>
-                  <p className="text-sm font-semibold text-gray-900 truncate">{ride?.destination}</p>
+                  <p className="text-base font-semibold text-gray-900 truncate">{ride?.destination}</p>
                 </div>
               </div>
             </div>
-            <div className={`${statusDisplay.bgColor} border border-gray-200 rounded-lg p-2 mb-3`}>
-            <div className="text-center">
-              <p className={`text-sm font-semibold ${statusDisplay.color}`}>
-                {statusDisplay.text}
-              </p>
-              {ride?.status === 'ongoing' && (
-                <p className="text-xs text-gray-600 mt-1">
-                  Started {elapsedTime} minutes ago
+            <div className={`${statusDisplay.bgColor} border border-gray-200 rounded-lg p-2`}>
+              <div className="text-center">
+                <p className={`text-base font-semibold ${statusDisplay.color}`}>
+                  {statusDisplay.text}
                 </p>
-              )}
-            </div>
+                {ride?.status === 'ongoing' && (
+                  <p className="text-xs text-gray-600 mt-1">
+                    Started {elapsedTime} minutes ago
+                  </p>
+                )}
+              </div>
           </div>
         </div>
       </div>

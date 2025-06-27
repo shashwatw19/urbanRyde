@@ -9,8 +9,9 @@ export interface RideType {
     fare : number | undefined,
     user : User | null,
     captain : Captain | null
-    duration: number | undefined,
+    duration: number ,
     status: 'pending' | 'accepted' | 'ongoing' | 'completed' | 'cancelled'
-    otp : number | undefined
+    otp : number | undefined,
+    distance : number 
 }
 

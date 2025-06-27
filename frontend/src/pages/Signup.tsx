@@ -61,7 +61,7 @@ const Signup = () => {
 };
   return (
     <div className="p-7 flex flex-col justify-between gap-10 items-start min-h-screen">
-      <h1 className="text-black md:text-4xl text-4xl ">URBANRYDE</h1>
+      <h1 className="text-black md:text-4xl text-4xl ">UrbanRyde</h1>
 
       <form
         onSubmit={handleSubmit}

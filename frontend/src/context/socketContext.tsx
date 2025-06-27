@@ -11,7 +11,7 @@ export const SocketContext = createContext<{ socket: ReturnType<typeof io> | nul
 
 const SocketProvider = ({ children } : SocketProviderType) => {
     const socket = useMemo(
-        () => io('https://530pz896-8000.inc1.devtunnels.ms', { withCredentials: true }),
+        () => io('https://7k2mt4bg-8000.inc1.devtunnels.ms', { withCredentials: true }),
         []
     );
     useEffect(() => {
