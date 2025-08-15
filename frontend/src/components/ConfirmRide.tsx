@@ -9,18 +9,20 @@ import auto from "../assets/auto.webp"
 import { fareType } from '../pages/HomeUser'
 import { TripType } from '../pages/HomeUser'
 import { createRide } from '../services/operations/ride/tripSetup'
-
+import { RideContext } from '../context/RideContext'
+import { useContext } from 'react'
 type ConfirmRideType = {
     vehicle : VehicleTypes,
- 
     setConfirmRidePanel : (value : boolean)=>void
     setLookingForDriver : (value : boolean)=>void
+    setVehiclePanel : (value : boolean)=>void
     fare : fareType,
-    trip : TripType
+    trip : TripType,
+    setRideId : (value :string  )=>void
 }
 
-const ConfirmRide = ({vehicle  , setConfirmRidePanel , setLookingForDriver , fare , trip} : ConfirmRideType) => {
-  
+const ConfirmRide = ({vehicle  , setConfirmRidePanel , setLookingForDriver , fare , trip , setRideId} : ConfirmRideType) => {
+    const {setRide} = useContext(RideContext)
    const getVehicleImage = () => {
     switch(vehicle.type) {
       case 'car': return car;
@@ -30,13 +32,22 @@ const ConfirmRide = ({vehicle  , setConfirmRidePanel , setLookingForDriver , far
     }
   }
   
-
   const handleConfirmRide = async()=>{
     setConfirmRidePanel(false)
     setLookingForDriver(true)
     try{
         const response = await createRide({pickup: trip.pickup , destination: trip.destination , vehicleType: vehicle.type!})
         console.log("response from handleRideConfirm" , response)
+        setRideId(response.data._id)
+        setRide({
+            destination : trip.destination,
+            pickup : trip.pickup,
+            vehicleType : vehicle.type,
+            fare : fare[vehicle.type!],
+            vehicleTag : vehicle.tags
+                
+
+        })
     }catch(e){
         console.log("error from frntend in handleConfirmRide" , e )
     }

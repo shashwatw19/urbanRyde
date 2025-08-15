@@ -22,7 +22,6 @@ type UserContextTpye = {
   setTrip: (value: number) => void,
   distanceTravelled : number 
   setDistanceTravelled: (value: number) => void;
-  setActiveHrs: (value: number) => void;
   sessionTime: number;
   getFormattedSessionTime: () => string;
   resetSessionTime: () => void;
@@ -68,7 +67,7 @@ const UserContext = ({ children }: UserContextProps) => {
   const [trip, setTrip] = useState<number>(0);
   const [distanceTravelled, setDistanceTravelled] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
-  const [activeHrs, setActiveHrs] = useState<number>(0);
+  
 
   const [sessionTime, setSessionTime] = useState<number>(0);
   const sessionStartTime = useRef<number>(Date.now());
@@ -136,7 +135,6 @@ const UserContext = ({ children }: UserContextProps) => {
           setAmount,
           setDistanceTravelled,
           setTrip,
-          setActiveHrs,
           handleCaptainData,
           sessionTime,
           getFormattedSessionTime,

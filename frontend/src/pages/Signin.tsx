@@ -10,8 +10,8 @@ const Signin = () => {
     password : ""
   })
   const navigate = useNavigate();
-  const {loading , setLoading  , setUser   } = useContext(UserDataContext)
-  const {setIsAuthenticated , setUserRole , setAuthLoading , setUserData} = useContext(AuthDataContext)
+  const {  setLoading      } = useContext(UserDataContext)
+  const {setIsAuthenticated , setUserRole , setAuthLoading , setUserData } = useContext(AuthDataContext)
   
   const [error , setErrors] = useState<Partial<UserSignInSchema>>({})
   const changeHandler = (e : ChangeEvent<HTMLInputElement>)=>{

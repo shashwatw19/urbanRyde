@@ -99,7 +99,6 @@ const getFareForTrip = asyncHandler(async(req : Request , res : Response)=>{
         throw new ApiError(404 , ' not able to calculate fare')
     }
 })
-
 const confirmRide = asyncHandler(async(req : Request , res : Response)=>{
     const error : Result = validationResult(req)
     if(!error.isEmpty()){
@@ -108,15 +107,22 @@ const confirmRide = asyncHandler(async(req : Request , res : Response)=>{
     }
 
     const {rideId} = req.body
-
-    const ride = await Ride.findByIdAndUpdate(rideId , {
-        captain : req.user?._id,
-        status: 'accepted'
-    }, { new: true })
+    const ride = await Ride.findOneAndUpdate(
+        { 
+            _id: rideId, 
+            status: 'pending',
+            captain: { $exists: false } // Ensure no captain is already assigned
+        },
+        {
+            captain: req.user?._id,
+            status: 'accepted'
+        },
+        { new: true }
+    )
     .populate('user', '-password')
     .populate('captain', '-password')
-    .select('+otp')
-    
+    .select('+otp');
+
     if(!ride){
         throw new ApiError(404 , 'Ride not found' )
     }
@@ -134,7 +140,23 @@ const confirmRide = asyncHandler(async(req : Request , res : Response)=>{
         new ApiResponse(200 , 'Ride Confirmed ' , ride)
     );
 })
+const cancleRide = asyncHandler(async(req : Request , res : Response)=>{
+    const error : Result = validationResult(req)
+    if(!error.isEmpty()){
+        const errrorMessage = error.array()
+        throw new ApiError(400 , 'Invalid Fields' , false , errrorMessage)
+    }
 
+    const {rideId} = req.body
+   
+    const deleteRide = await Ride.findByIdAndDelete(rideId);
+    if(!deleteRide){
+        throw new ApiError(401 , 'Something went wrong while canceling the ride')
+    }
+    return res.status(200).json(
+        new ApiResponse(200 , 'Ride cancelled successfully')
+    )
+})
 const startRide = asyncHandler(async (req: Request, res: Response) => {
     const errors: Result = validationResult(req);
 
@@ -260,5 +282,5 @@ const paymentRequest = asyncHandler(async(req : Request , res : Response)=>{
     )
 })
 
-export {createRide , getFareForTrip, startRide  , confirmRide , isValidRideUser , isValidRideCaptain , paymentRequest}
+export {createRide , getFareForTrip, startRide  , confirmRide , isValidRideUser , isValidRideCaptain , paymentRequest , cancleRide}
 

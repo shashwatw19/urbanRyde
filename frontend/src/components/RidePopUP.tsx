@@ -6,6 +6,7 @@ import { UserDataContext } from "../context/UserContext";
 
 import { confirmRide } from "../services/operations/ride/tripSetup";
 import { RideContext } from "../context/RideContext";
+import { toast } from "sonner";
 
 type RidePopUPType = {
     setRidePopup : (value : boolean)=>void
@@ -22,11 +23,13 @@ const RidePopUP = ({setRidePopup , setConfirmRidePopup }:RidePopUPType) => {
           rideId : ride?._id!,
           setLoading : setLoading
         }
-        const response = await confirmRide(data)
+        await confirmRide(data)
         setRidePopup(false)
         setConfirmRidePopup(true)
       }catch(e){
+        toast.error("This ride is being cancelled or no longer available")
         console.log("error in handleAcceptRide" , e)
+        setRidePopup(false)
       }
   }
   return (

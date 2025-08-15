@@ -6,10 +6,10 @@ import { ChangeEvent } from "react";
 import { toast } from "sonner";
 import { UserSignUpType } from "../types/userTypes";
 import { signup } from "../services/operations/user/auth";
-import AuthContext, { AuthDataContext } from "../context/AuthContext";
+import  { AuthDataContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 const VerifyEmail = () => {
-  const {userSignupData , setUserSignupData , loading , setLoading ,setUser , user} = useContext(UserDataContext);
+  const {userSignupData ,  loading , setLoading  , user} = useContext(UserDataContext);
   const {setIsAuthenticated , setUserRole , setAuthLoading , setUserData} = useContext(AuthDataContext)
   const navigate = useNavigate()
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);

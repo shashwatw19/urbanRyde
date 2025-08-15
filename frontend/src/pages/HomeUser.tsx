@@ -14,13 +14,15 @@ import { FaLocationDot, FaLocationPinLock } from "react-icons/fa6"
 import { FaRegClock } from "react-icons/fa6";
 import { toast } from "sonner";
 import { getFareForTrip } from "../services/operations/ride/tripSetup";
-import { useNavigate } from "react-router-dom";
+import UserRideCompleted from "./UserRideCompleted";
 import { SocketContext } from "../context/socketContext";
 import { AuthDataContext } from "../context/AuthContext";
 import { RideType } from "../types/rideTypes";
 import LiveTracking from "../components/LiveTracking";
 import { RideContext } from "../context/RideContext";
-
+import { UserOngoingRide } from "./UserOngoingRide";
+import { getModalState , saveModalState } from "../utils/modalState";
+import { saveRideId , getRideId } from "../utils/ridePersistence";
 export type fareType = {
   car: number | undefined,
   auto : number | undefined,
@@ -45,7 +47,7 @@ export type VehicleType = 'car' | 'auto' | 'moto' | null
 const HomeUser = () => {
 
   
-  // suggestion system starts from here
+  // ****************suggestion system starts from here********************
   const [trip , setTrip] = useState<TripType>({
     pickup : "",
     destination : ""
@@ -97,8 +99,6 @@ const HomeUser = () => {
     }
   }, [debouncedDestination, suggestions.activeField]);
 
-  
-  
   const handleSuggestionSelect = (suggestion: Suggestions, field: 'pickup' | 'destination' , index : number) => {
     setTrip(prev => ({
       ...prev,
@@ -122,7 +122,7 @@ const HomeUser = () => {
       activeField: null
     });
   };
-  // suggestion system ends here
+  // **************suggestion system ends here**************************
 
   // setting up fare for trip 
   const [fare , setFare] = useState<fareType>({
@@ -141,6 +141,29 @@ const HomeUser = () => {
       }
   }
   const handleLeaveNow = async()=>{
+    if (paymentRequest) {
+    setPaymentRequest(true);
+    toast.info("Complete your payment to finish the ride");
+    return;
+  }
+  
+  if (rideStarted) {
+    setRideStarted(true);
+    toast.info("Your ride is in progress");
+    return;
+  }
+  
+  if (watingForDriver) {
+    setWaitingForDriver(true);
+    toast.info("Your driver is on the way");
+    return;
+  }
+  
+  if (lookingForDriver) {
+    setLookingForDriver(true);
+    toast.info("Searching for available drivers");
+    return;
+  }
   if(trip.pickup && trip.destination && trip.pickup.length >2 && trip.destination.length > 2 ){
     if(await setupFareForTrip(trip.pickup , trip.destination )){
         clearSuggestions()
@@ -150,8 +173,6 @@ const HomeUser = () => {
     else{
       toast.error("Not Able To Create Trip for You . Please Try Again In Some Time")
     }
-   
-
   }else{
     toast.info('Select Pickup And Destination To Begin Ride')
   }
@@ -170,9 +191,9 @@ const HomeUser = () => {
     
     type : null
   })
-  const [lookingForDriver , setLookingForDriver] = useState<boolean>(false)
+  const [lookingForDriver, setLookingForDriver] = useState<boolean>(() => getModalState("lookingForDriver"));
   const lookingForDriverRef = useRef(null)
-  const [watingForDriver , setWaitingForDriver] = useState<boolean>(false)
+  const [watingForDriver, setWaitingForDriver] = useState<boolean>(() => getModalState("watingForDriver"));
   const watingforDriverRef = useRef(null)
   const changeHandler = (e :ChangeEvent< HTMLInputElement>)=>{
       const {name , value} = e.target
@@ -267,7 +288,36 @@ const handleWatingForDriver = ()=>{
     })
   }
 }
-
+const handleOnGoingRide = ()=>{
+  if(rideStarted){
+    gsap.to(rideStartedRef.current , {
+      y: 0,  
+      duration : 0.5,
+      ease : "power2.out" 
+    })
+  }else{
+    gsap.to(rideStartedRef.current , {
+      y: "100%",  
+      duration : 0.5,
+      ease : "power2.out"
+    })
+  }
+}
+const handleRidePayment = ()=>{
+  if(paymentRequest){
+    gsap.to(paymentRequestRef.current , {
+      y: 0,  
+      duration : 0.5,
+      ease : "power2.out" 
+    })
+  }else{
+    gsap.to(paymentRequestRef.current , {
+      y: "100%",  
+      duration : 0.5,
+      ease : "power2.out"
+    })
+  }
+}
   useEffect(()=>{
     handlePanelOpen()
   },[panelOpen])
@@ -290,23 +340,26 @@ const handleWatingForDriver = ()=>{
     const {socket} = useContext(SocketContext)
     const {userData} = useContext(AuthDataContext)
     const {setRide} = useContext(RideContext)
-    const navigate = useNavigate()
     
-    const handleRideAccepted = (data : RideType) => {
-          console.log("Ride accepted data received:", data);
-          setRide(data)
-          setLookingForDriver(false);
-          setWaitingForDriver(true);
-          toast.success('Your ride has been accepted!');
-    };
+    
+   
+    //states for managing ride
+    const [rideStarted, setRideStarted] = useState(() => getModalState("rideStarted"));
+    const rideStartedRef = useRef(null)
+    const {ride, isValidRide,  error, clearError } = useContext(RideContext);
+    const [paymentRequest, setPaymentRequest] = useState(() => getModalState("paymentRequest"));
+    const paymentRequestRef = useRef(null)
 
-    const handleRideStarted = (data : RideType) =>{
-      console.log("Ride-Started data recieved " ,data)
-      setRide(data)
-      setWaitingForDriver(false);
-      navigate(`/user/ride/${data._id}`)
-      toast.success('Your ride has been accepted!');
-    }
+    //for handling on going ride modal
+    useEffect(()=>{
+      handleOnGoingRide()
+    },[rideStarted])
+
+    //for handling payment and ride ending modal
+    useEffect(()=>{
+      handleRidePayment()
+    },[paymentRequest])
+
 
     useEffect(() => {
       if (socket && userData) {
@@ -314,6 +367,15 @@ const handleWatingForDriver = ()=>{
           socket.emit("join", { userId: userData._id, userRole: "user" });
       } 
     }, [socket, userData]);
+
+    // on ride accepted
+    const handleRideAccepted = (data : RideType) => {
+          console.log("Ride accepted data received:", data);
+          setRide(data)
+          setLookingForDriver(false);
+          setWaitingForDriver(true);
+          toast.success('Your ride has been accepted!');
+    };
     useEffect(() => {
       if (lookingForDriver && socket && userData) {
           console.log("Setting up Ride-Accepted listener");
@@ -325,6 +387,34 @@ const handleWatingForDriver = ()=>{
           };
       }
     }, [lookingForDriver, socket, userData]);
+
+    //on ride started
+    const handleRideStarted = async(data : RideType) =>{
+      console.log("Ride-Started data recieved " ,data)
+      
+      const validRide = await isValidRide(data._id , 'user');
+      if(validRide){
+        setRide(data)
+        setWaitingForDriver(false);
+        setRideStarted(true)
+        toast.success('Your ride has been started!');
+      }
+      else{
+        toast.error(error)
+        clearError()
+      }
+    }
+
+    const handlePaymentRequest = async(data : RideType)=>{
+       if ( ride && ride._id == data._id) {
+          const validRide = await isValidRide(data._id , 'user');
+          if(validRide){
+            setRideStarted(false)
+            setPaymentRequest(true)
+          }
+        }
+        console.log("payment request recieved", data);
+    }
     useEffect(() => {
       if (socket && userData) {
           socket.on("Ride-Started", handleRideStarted);
@@ -334,36 +424,50 @@ const handleWatingForDriver = ()=>{
           };
       }
     }, [socket, userData]); 
- return (
-    <div className="overflow-hidden"> 
-      
 
-      <div className="h-screen" onClick={()=>setVehiclePanel(false)}> 
+    //requesting for payment
+    useEffect(() => {
+    if (socket && ride?._id) {
+      socket.on("Payment-Request", handlePaymentRequest);
+      return () => {
+        socket.off("Payment-Request");
+      };
+    }
+  }, [socket, ride?._id]);
+
+  //storing rideId is case of canceling ride
+  const[rideId , setRideId] = useState<string | null>(()=>getRideId())
+
+
+   // Save to localStorage whenever state changes
+  useEffect(() => { saveModalState("lookingForDriver", lookingForDriver); }, [lookingForDriver]);
+  useEffect(() => { saveModalState("watingForDriver", watingForDriver); }, [watingForDriver]);
+  useEffect(() => { saveModalState("rideStarted", rideStarted); }, [rideStarted]);
+  useEffect(() => { saveModalState("paymentRequest", paymentRequest); }, [paymentRequest]);
+  useEffect(() => { saveRideId(rideId); }, [rideId])
+
+  return (
+    <div className="overflow-hidden"> 
+      <div className="h-screen w-full"> 
         <LiveTracking/>
-       
-        <p className="absolute top-3 left-3 px-2 py-1 text-lg font-bold uppercase text-gray-800 bg-white/80 rounded-lg backdrop-blur-sm"> 
+      <p className="absolute top-3 left-3 px-2 py-1 text-lg font-bold uppercase text-gray-800 bg-white rounded-lg backdrop-blur-sm"> 
           UrbanRyde
         </p>
       </div>
 
-      <div className="h-screen flex flex-col justify-end absolute top-0 w-full ">
-        
-  
+      <div className="h-screen flex flex-col justify-end absolute top-0 w-full">
+        {/* search input feilds */}
         <div className="bg-white px-3 py-4 h-[30%] relative"> 
           
-     
           <div className="flex items-center justify-between mb-3">
             <h4 className="text-xl font-semibold text-gray-900">Find a trip</h4> 
             <div ref={panelCloseRef} onClick={()=>setPanelOpen(false)} className="text-lg cursor-pointer"> 
               <FaSortDown/>
             </div>
           </div>
-
-        
-          <form onSubmit={submitHandler} className="flex flex-col gap-4"> 
-            
           
-           <div className="relative">
+          <form onSubmit={submitHandler} className="flex flex-col gap-4"> 
+            <div className="relative">
               <input
                 className="bg-gray-100 w-full pl-8 pr-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" /* Reduced padding and font size */
                 type="text"
@@ -376,8 +480,6 @@ const handleWatingForDriver = ()=>{
               />
               <FaLocationDot className="text-gray-600 absolute top-3 left-2.5 text-sm"/> 
             </div>
-
-           
             <div className="relative">
               <input
                 className="bg-gray-100 w-full pl-8 pr-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" /* Reduced padding and font size */
@@ -391,19 +493,17 @@ const handleWatingForDriver = ()=>{
               />
               <FaLocationPinLock className="text-gray-600 absolute top-3 left-2.5 text-sm"/> 
             </div>
-
-    
+            
             <button 
               onClick={()=>handleLeaveNow()} 
-              className="bg-gray-900 font-semibold rounded-lg px-4 py-2.5 w-full text-sm text-white flex items-center justify-center gap-2 mt-5 " 
-            >
+              className={'font-semibold rounded-lg px-4 py-2.5 w-full text-sm text-white flex items-center justify-center gap-2 mt-5 bg-gray-900 hover:bg-gray-800'} >
               <FaRegClock className="text-sm"/>
-              Leave now
+            
+                Leave Now
             </button>
           </form>
         </div>
-
-   
+        {/* search modal open */}
         <div ref={panelRef} className="bg-white h-0 overflow-hidden">
           <LocationSearchPanel 
             setPanelOpen={setPanelOpen} 
@@ -414,6 +514,7 @@ const handleWatingForDriver = ()=>{
           />
         </div>
 
+        {/* vehicle selection  */}
         <div ref={vehiclePanelRef} className="fixed w-full bottom-0 translate-y-full z-10 bg-white">
           <VehicleSelection 
             fare={fare} 
@@ -423,39 +524,51 @@ const handleWatingForDriver = ()=>{
           />
         </div>
 
+        {/* confirm ride  */}
         <div ref={confirmRideRef} className="fixed w-full bottom-0 translate-y-full z-10 bg-white">
           <ConfirmRide 
+           setVehiclePanel={setVehiclePanel} 
             fare={fare} 
             trip={trip} 
             vehicle={vehicle} 
+            setRideId = {setRideId}
             setConfirmRidePanel={setConfirmRidePanel} 
             setLookingForDriver={setLookingForDriver}
           />
         </div>
 
+        {/* looking for driver  */}
         <div ref={lookingForDriverRef} className="fixed w-full bottom-0 translate-y-full bg-white">
           <LookingForDriver 
-            
-            fare={fare} 
-            trip={trip} 
-            vehicle={vehicle} 
-            setVehicle={setVehicle} 
+            setVehiclePanel={setVehiclePanel} 
             setLookingForDriver={setLookingForDriver} 
             setWaitingForDriver={setWaitingForDriver} 
             setConfirmRidePanel={setConfirmRidePanel} 
+            setRideId={setRideId}
+            rideId = {rideId}
           />
         </div>
 
+        {/* wating for driver  */}
         <div ref={watingforDriverRef} className="fixed w-full bottom-0 translate-y-full bg-white">
           <WatingForDriver 
-          
             vehicle={vehicle} 
             setVehicle={setVehicle} 
-            setLookingForDriver={setLookingForDriver} 
             setWaitingForDriver={setWaitingForDriver}  
           />
         </div>
 
+        {/* ongoing ride  */}
+        <div ref={rideStartedRef} className="fixed w-full bottom-0 translate-y-full bg-white">
+          <UserOngoingRide/>
+        </div>
+
+        {/* payment section */}
+        <div ref={paymentRequestRef} className="fixed w-full bottom-0 translate-y-full bg-white">
+          <UserRideCompleted setPaymentRequest={setPaymentRequest} setLookingForDriver = {setLookingForDriver}
+          setWaitingForDriver = {setWaitingForDriver}
+          setRideStarted = {setRideStarted} setTrip={setTrip}/> 
+        </div>
       </div>
     </div>
   );

@@ -13,8 +13,8 @@ type AuthContextType = {
     isAuthenticated : boolean,
     setIsAuthenticated : (value : boolean)=>void
     userRole : UserRole,
-    userData : User | Captain;
-    setUserData : (value : User | Captain)=>void
+    userData : User | Captain | null,
+    setUserData : (value : User | Captain | null)=>void
     loading : boolean,
     setAuthLoading : (value : boolean)=>void
     setUserRole : (value : any)=>void
@@ -29,7 +29,7 @@ export const AuthDataContext = createContext<AuthContextType>({} as AuthContextT
 const AuthProvider = ({children} : AuthContextProps)=>{
     const [isAuthenticated , setIsAuthenticated] = useState<boolean>(false);
     const [userRole , setUserRole] = useState<UserRole>(null)
-    const [userData , setUserData] = useState<User | Captain>({
+    const [userData , setUserData] = useState<User | Captain | null>({
         _id : "",
         fullname : {
             firstname : "",

@@ -2,11 +2,12 @@ import { UserSignUpSchema } from "../schema/UserSchema";
 import { useContext, useState } from "react";
 import { userSignUpSchema } from "../schema/UserSchema";
 import { ChangeEvent, FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { createOtp } from "../services/operations/user/auth";
 import { UserDataContext } from "../context/UserContext";
+import VerifyEmail from "./VerifyEmail";
 const Signup = () => {
-  const navigate = useNavigate()
+
   const [input, setInput ] = useState<UserSignUpSchema>({
     email: "",
     password: "",
@@ -14,6 +15,7 @@ const Signup = () => {
     lastname: "",
   });
   const {setUser , loading ,  setLoading} = useContext(UserDataContext)
+  const [showVerifyEmail , setShowVerifyEmail] = useState<boolean>(false)
   const [error, setErrors] = useState<Partial<UserSignUpSchema>>({});
   const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -45,7 +47,8 @@ const Signup = () => {
             lastname : input.lastname || ""
           }
         })
-        return navigate("/verify-email")
+        // return navigate("/verify-email")
+        setShowVerifyEmail(true)
       }
     }catch(e){
       console.log("error in signup component" , e)
@@ -59,6 +62,9 @@ const Signup = () => {
     });
     }
 };
+  if(showVerifyEmail){
+    return <VerifyEmail></VerifyEmail>
+  }
   return (
     <div className="p-7 flex flex-col justify-between gap-10 items-start min-h-screen">
       <h1 className="text-black md:text-4xl text-4xl ">UrbanRyde</h1>

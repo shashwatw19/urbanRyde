@@ -30,7 +30,7 @@ const LiveTracking = ()=>{
     setMap(map)
   }, [])
 
-  const onUnmount = useCallback(function callback(map : google.maps.Map) {
+  const onUnmount = useCallback(function callback() {
     setMap(null)
   }, [])
   
@@ -85,6 +85,7 @@ const LiveTracking = ()=>{
             mapTypeControl: false,
             fullscreenControl: true,
             gestureHandling: 'greedy',
+            scrollwheel: true, // allow scroll to zoom
           }}
         >
           <Marker 

@@ -63,6 +63,7 @@ const confirmRide = async({rideId , setLoading}:{rideId : string , setLoading : 
         console.log("response from confirmRide fn " , response)
     }catch(e){
         console.log("error in confirmRide fn" , e)
+        throw e
     }finally{
         setLoading(false)
     }
@@ -91,8 +92,22 @@ const startRide = async ({ rideId, otp , userSocketId ,setLoading , setRide}: Co
     }
 
 }
-
-const requestPayment = async({rideId ,userSocketId, setLoading , setRide} : Partial<ConfirmRideType>)=>{
+const cancelRide = async(rideId : string | null)=>{
+     if(!rideId || rideId.length == 0){
+        throw new Error('invalid rideId')
+    }
+     try{ 
+        const response = await apiConnector("POST" , RIDE.CANCEL_RIDE , {rideId} , {
+            'Content-Type' : 'application/json'
+        }) 
+        console.log("response from cancelRide fn " , response)
+        return response.data;
+    }catch(e){
+        console.log("error in confirmRide fn" , e)
+        
+    }
+}
+const requestPayment = async({rideId ,userSocketId, setLoading } : Partial<ConfirmRideType>)=>{
     if(!rideId || rideId.length ==0 ){
         throw new Error('invalid rideId')
     }
@@ -113,4 +128,4 @@ const requestPayment = async({rideId ,userSocketId, setLoading , setRide} : Part
         setLoading?.(false)
     }
 }
-export { getFareForTrip, createRide , startRide , confirmRide , requestPayment}
+export { getFareForTrip, createRide , startRide , confirmRide , requestPayment , cancelRide}

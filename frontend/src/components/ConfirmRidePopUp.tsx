@@ -6,20 +6,17 @@ import { toast } from "sonner"
 import { startRide } from "../services/operations/ride/tripSetup"
 import { UserDataContext } from "../context/UserContext"
 import { useContext } from "react"
-import { useNavigate } from "react-router-dom"
+
 type ConfirmRidePopUpTypes = {
     setConfirmRidePopup: (value: boolean) => void
-    setRidePopup: (value: boolean) => void
-
+   
+    setCaptainRiding : (value : boolean)=>void
 }
 
-const ConfirmRidePopUp = ({ setConfirmRidePopup, setRidePopup }: ConfirmRidePopUpTypes) => {
-    const handlePopUps = () => {
-        setRidePopup(false)
-        setConfirmRidePopup(false)
-    }
+const ConfirmRidePopUp = ({setConfirmRidePopup, setCaptainRiding}: ConfirmRidePopUpTypes) => {
+    
     const {ride , setRide} = useContext(RideContext)
-    const navigate = useNavigate()
+   
     const { setLoading , loading} = useContext(UserDataContext)
     const handleStartRide = async (e: FormEvent) => {
         e.preventDefault()
@@ -39,7 +36,9 @@ const ConfirmRidePopUp = ({ setConfirmRidePopup, setRidePopup }: ConfirmRidePopU
         try {
             const response = await startRide(data)
             if (response) {
-                navigate(`/captain/ride/${ride?._id}`)
+                setConfirmRidePopup(false)
+                setCaptainRiding(true)
+                setOtp("")
             } else {
                 toast.error('invalid ride or otp')
             }
@@ -151,9 +150,9 @@ const ConfirmRidePopUp = ({ setConfirmRidePopup, setRidePopup }: ConfirmRidePopU
                     />
                 </div>
                 <div className="flex items-center justify-between gap-2 w-full">
-                    <button onClick={handlePopUps} disabled={loading} className="w-full bg-red-600  text-white py-2 rounded-xl font-semibold">
+                    {/* <button onClick={handlePopUps} disabled={loading} className="w-full bg-red-600  text-white py-2 rounded-xl font-semibold">
                         Cancle
-                    </button>
+                    </button> */}
 
                     <button type="submit" disabled={loading} onClick={(e)=>handleStartRide(e)} className="w-full  bg-green-600  text-white py-2 rounded-xl font-semibold">
                         Confirm

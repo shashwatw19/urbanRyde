@@ -1,8 +1,9 @@
 import Router from 'express'
 import {body , query} from 'express-validator'
 import { verifyJwt } from '../middleware/auth.midleware'
-import {createRide , getFareForTrip , confirmRide , startRide , isValidRideUser , isValidRideCaptain , paymentRequest} from '../controllers/ride.controller'
+import {createRide , getFareForTrip , confirmRide , startRide , isValidRideUser , isValidRideCaptain , paymentRequest , cancleRide} from '../controllers/ride.controller'
 import { captainVerify } from '../middleware/captainAuth.middleware'
+
 const router = Router()
 
 router.route('/create').post([
@@ -23,6 +24,12 @@ router.route('/get-fare').get([
 router.route('/confirm-ride').post([
     body('rideId').isString().withMessage('rideId is required'),
 ],captainVerify , confirmRide)
+
+
+//create a route for cancel ride
+router.route('/cancel-ride').post([
+    body('rideId').isString().withMessage('rideId is required'),
+],verifyJwt , cancleRide)
 
 router.route('/start-ride').post([
     body('rideId').isString().withMessage('rideId is required and must be a string'),

@@ -22,16 +22,19 @@ const UserProtectedWrapper = ({ children }: UserProtectedWrapperType) => {
         }
 
         setLocalLoading(true)
-        const isUserAuth = await checkAuth('user')                                          
+        const isUserAuth = await checkAuth('user')  
+        console.log("checked for userAuth" , isUserAuth)                                        
         if(!isUserAuth){
+        
            const isCaptainAuth =  await checkAuth('captain')
+           console.log("checked for captainAuth ...." , isCaptainAuth)
             isCaptainAuth ? navigate('/captain/home') :  navigate('/signin')
           
         }
         setLocalLoading(false)
       }
       verifyUserAuth()
-    }, [isAuthenticated, userRole, loading, navigate, checkAuth]);
+    }, [isAuthenticated, userRole, loading]);
 
     if (loading || localLoading) {
         return <div>Loading...</div>;

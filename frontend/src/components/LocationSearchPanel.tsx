@@ -1,15 +1,8 @@
-import { FaClock, FaLocationDot } from "react-icons/fa6"
+import {  FaLocationDot } from "react-icons/fa6"
 import { Suggestions, TripType } from "../pages/HomeUser";
 import { SuggestionState } from "../pages/HomeUser";
-import { FaSearch } from "react-icons/fa";
-const locations = [
-    "8/31 Vijay Nagar, Indore, Behind Sica School",
-    "12 MG Road, Near Treasure Island Mall, Indore",
-    "45 Scheme No 54, Opposite C21 Mall, Indore",
-    "101 New Palasia, Near Industry House, Indore",
-    "22 Rajendra Nagar, Near Railway Station, Indore",
-    "67 Sudama Nagar, Sector D, Indore"
-];
+
+
 type LocationSearchPanelTypes = {
   
   setVehiclePanel : ( value : boolean)=>void
@@ -18,7 +11,7 @@ type LocationSearchPanelTypes = {
   onSuggestionSelect: (suggestion: Suggestions, field: 'pickup' | 'destination' , index: number) => void;
   trip : TripType
 }
-const LocationSearchPanel = ({setVehiclePanel , setPanelOpen , suggestions , onSuggestionSelect , trip} : LocationSearchPanelTypes) => {
+const LocationSearchPanel = ({  suggestions , onSuggestionSelect } : LocationSearchPanelTypes) => {
  
   const renderSuggestions = ()=>{
     const {activeField , loading} = suggestions

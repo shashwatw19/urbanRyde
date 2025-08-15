@@ -59,6 +59,7 @@ const registerCaptain = asyncHandler(async(req : Request , res : Response )=>{
         maxAge : 1 * 24 * 60 * 60 * 1000
     }
     newUser.password = undefined
+    
     return res.status(200).cookie("accessToken" , accessToken , payload).json(
          new ApiResponse(200 , 'captain registered successfully' , newUser)
     )
@@ -120,8 +121,8 @@ const logout = asyncHandler(async(req : Request , res : Response)=>{
         token : accessToken
     })
     
-    return res.status(200).clearCookie("accessToken", { httpOnly: true, secure: true }).json(
-        new ApiResponse(200 , 'user logged out successfully' , username)
+    return res.status(200).clearCookie("accessToken").json(
+        new ApiResponse(200 , 'user logged out successfully' , {} , true)
     )
 })
 

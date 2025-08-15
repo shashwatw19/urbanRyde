@@ -2,15 +2,16 @@ import { CaptainSignUpSchema } from "../schema/CaptainSchema";
 import { captainSignUpSchema } from "../schema/CaptainSchema";
 import { useContext, useState } from "react";
 import { ChangeEvent, FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { createOtp } from "../services/operations/user/auth";
 import { UserDataContext } from "../context/UserContext";
 import moto from '../assets/bike.webp'
 import car from "../assets/car.webp"
 
 import auto from "../assets/auto.webp"
+import VerifyEmail from "./VerifyEmail";
 const CaptainSignup = () => {
-  const navigate = useNavigate();
+
   const [input, setInput] = useState<CaptainSignUpSchema>({
     email: "",
     password: "",
@@ -24,7 +25,7 @@ const CaptainSignup = () => {
 
   const { loading, setLoading, setUser } = useContext(UserDataContext);
   const [error, setErrors] = useState<Partial<CaptainSignUpSchema>>({});
-
+  const [showVerifyEmail , setShowVerifyEmail] = useState<boolean>(false)
   const changeHandler = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -62,7 +63,8 @@ const CaptainSignup = () => {
             vehicleType: input.vehicleType!
           }
         });
-        return navigate('/verify-email-captain');
+        // return navigate('/verify-email-captain');
+        setShowVerifyEmail(true)
       }
     } catch (e) {
       console.log("error in signup component", e);
@@ -71,6 +73,9 @@ const CaptainSignup = () => {
     }
   };
 
+  if(showVerifyEmail){
+    return <VerifyEmail></VerifyEmail>
+  }
   return (
     <div className="p-7 flex flex-col justify-between gap-10 items-start min-h-screen">
       <h1 className="text-black md:text-4xl text-4xl ">UrbanRyde</h1>

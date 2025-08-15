@@ -1,10 +1,10 @@
-import { FaSortDown, FaPhone, FaStar, FaCar } from 'react-icons/fa'
+import { FaSortDown,  FaStar,  } from 'react-icons/fa'
 import { VehicleTypes } from './VehicleCard'
 import { FaLocationDot } from "react-icons/fa6"
 import { FaLocationPinLock } from 'react-icons/fa6'
 import { FaMoneyCheck } from 'react-icons/fa6'
 import { FaMessage } from 'react-icons/fa6'
-import { useState } from 'react'
+import { toast } from 'sonner'
 import { RideContext } from '../context/RideContext'
 import { useContext } from 'react'
 
@@ -12,17 +12,14 @@ type WaitingForDriverType = {
     vehicle : VehicleTypes, 
     setVehicle : (value : VehicleTypes)=>void
     setWaitingForDriver : (value : boolean)=>void
-    setLookingForDriver? : (value : boolean)=>void
-    
 }
 
-const WaitingForDriver = ({vehicle , setVehicle , setWaitingForDriver, setLookingForDriver } : WaitingForDriverType) => {
-    const [arrivalTime, setArrivalTime] = useState(5) // minutes
+const WaitingForDriver = ({vehicle  , setWaitingForDriver } : WaitingForDriverType) => {
+    //this is a hardCoded value
+    const arrivalTime = 5
     const {ride} = useContext(RideContext)
-    const handleCancel = () => {
-        setWaitingForDriver(false)
-        setLookingForDriver?.(true)
-    }
+    console.log("ride from waiting for driver" , ride)
+  
 
     return (
         <div className='max-w-md h-screen mx-auto flex flex-col justify-between gap-2  overflow-y-auto p-5'>
@@ -122,20 +119,13 @@ const WaitingForDriver = ({vehicle , setVehicle , setWaitingForDriver, setLookin
 
             {/* Action Buttons */}
             <div className='space-y-2 mb-2'>
-                <button 
-                    
-                    className='w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center gap-2 text-base'
-                >
+                <button onClick={()=>toast.info("your driver is not the way")}
+                    className='w-full bg-green-600 hover:bg-green-700 text-white  py-2 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center gap-2 text-base'>
                     <FaMessage/>
-                    <span>Message Driver</span>
+                    <span >On The Way</span>
                 </button>
                 
-                <button 
-                    onClick={handleCancel}
-                    className='w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-semibold transition-colors duration-200 text-base'
-                >
-                    Cancel Ride
-                </button>
+              
             </div>
 
             {/* Additional Info */}

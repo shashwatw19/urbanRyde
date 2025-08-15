@@ -6,6 +6,7 @@ export interface RideType {
     pickup : string,
     destination : string,
     vehicleType : VehicleType,
+    vehicleTag : any
     fare : number | undefined,
     user : User | null,
     captain : Captain | null

@@ -1,4 +1,4 @@
-import { OTP, USER } from "../../apis";
+import { CAPTAIN, OTP, USER } from "../../apis";
 import { apiConnector } from "../../apiConnector";
 import { UserSignUpType } from "../../../types/userTypes";
 import { toast } from "sonner";
@@ -79,11 +79,35 @@ export const checkUserAuth = async()=>{
       const response =  await apiConnector("GET" , USER.checkAuth , undefined , {
         'Content-Type' : 'application/json'
       })
-     
+    
       return response.data
     }catch(e){
         console.log("error from checkUserAuth " , e)
         return {success : false}
         
     }   
+}
+export const userLogout = async()=>{
+    try{
+        const response = await apiConnector("POST" , USER.logout , undefined , {
+            'Content-Type' : 'application/json'
+        })
+        console.log("response from logout api" , response)
+        return response.data.success
+    }catch(e){
+        console.log("error from logout ," , e)
+        return false
+    }
+}
+export const captainLogout = async()=>{
+    try{
+        const response = await apiConnector("POST" ,CAPTAIN.logout , undefined , {
+            'Content-Type' : 'application/json'
+        })
+        console.log("response from logout api" , response)
+        return response.data.success
+    }catch(e){
+        console.log("error from logout ," , e)
+        return false
+    }
 }

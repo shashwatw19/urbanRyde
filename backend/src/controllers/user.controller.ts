@@ -97,10 +97,11 @@ const signin = asyncHandler(async(req : Request , res : Response)=>{
     )
 })
 const logout = asyncHandler(async(req : Request,res : Response)=>{
+
     const userId = req.user?._id
     const accessToken = req?.cookies?.accessToken
     const validUser = await User.findById(userId)
-
+    console.log("user log out called")
     if(!validUser)
         throw new ApiError(401 , 'invalid request for logout')
     
@@ -108,8 +109,8 @@ const logout = asyncHandler(async(req : Request,res : Response)=>{
         token : accessToken
     }) 
     
-    res.status(200).clearCookie('accessToken').json(
-        new ApiResponse(200 , 'User logged Out Successfully')
+    return res.status(200).clearCookie('accessToken').json(
+        new ApiResponse(200 , 'User logged Out Successfully' , {} , true )
     )
 })
 const checkAuth = asyncHandler(async(req : Request , res : Response)=>{

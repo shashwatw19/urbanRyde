@@ -1,12 +1,13 @@
 import  { createContext, useState, ReactNode } from 'react';
 import { RideType } from '../types/rideTypes';
 import { verifyRide } from '../services/operations/ride/rideAuth';
-
+import { saveRideData, getRideData, clearRideData } from "../utils/ridePersistence"
+import { useEffect } from 'react';
 // Context Type Definition
 type RideContextType = {
-  ride: RideType | null;
-  setRide: (ride: RideType | null) => void;
-  isValidRide: (rideId: string , userRole : 'user' | 'captain') => Promise<RideType | null>;
+  ride: Partial<RideType> | null;
+  setRide: (ride:  Partial<RideType>  | null) => void;
+  isValidRide: (rideId: string , userRole : 'user' | 'captain') => Promise<boolean>;
   loading: boolean;
   error: string | null;
   clearError: () => void;
@@ -23,15 +24,15 @@ export const RideContext = createContext<RideContextType>({} as RideContextType)
 
 const RideProvider = ({ children }: RideContextProps) => {
   
-  const [ride, setRide] = useState<RideType | null>(null);
+  const [ride, setRide] = useState< Partial<RideType>  | null>(() => getRideData());
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
     
-  const isValidRide = async (rideId: string , userRole : 'user' | 'captain'): Promise<RideType | null> => {
+  const isValidRide = async (rideId: string , userRole : 'user' | 'captain'): Promise<boolean> => {
     if (!rideId) {
       setError('Ride ID is required');
-      return null;
+      return false;
     }
 
     setLoading(true);
@@ -47,18 +48,18 @@ const RideProvider = ({ children }: RideContextProps) => {
         const fetchedRide = response.data;
         setRide(fetchedRide);
         console.log('Ride fetched successfully:', fetchedRide);
-        return fetchedRide;
+        return true;
       } else {
         const errorMessage = response?.message || 'Failed to fetch ride';
         setError(errorMessage);
         console.error('Failed to fetch ride:', errorMessage);
-        return null;
+        return false;
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
       setError(errorMessage);
       console.error('Error fetching ride:', err);
-      return null;
+      return false;
     } finally {
       setLoading(false);
     }
@@ -74,7 +75,13 @@ const RideProvider = ({ children }: RideContextProps) => {
   const clearRide = () => {
     setRide(null);
     setError(null);
+    clearRideData()
   };
+
+   // Persist ride data on change
+  useEffect(() => {
+    saveRideData(ride);
+  }, [ride]);
 
  
 

@@ -22,7 +22,7 @@ const CaptainDetails = () => {
 
                   {/* Driver Details */}
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-900 capitalize">{userData.fullname.firstname} {userData.fullname.lastname}</p>
+                    <p className="font-semibold text-gray-900 capitalize">{userData?.fullname.firstname} {userData?.fullname.lastname}</p>
                     
                     <div className="flex items-center gap-1">
                       <FaStar className="text-yellow-500 text-xs" />

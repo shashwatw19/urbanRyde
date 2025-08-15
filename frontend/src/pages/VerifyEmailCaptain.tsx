@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Captain, SignUpCaptain } from "../types/captainTypes";
 const VerifyEmailCaptain = () => {
-  const { userSignupData, loading, user, setUser, setLoading } = useContext(UserDataContext);
+  const { userSignupData, loading, user, setLoading } = useContext(UserDataContext);
   const { setIsAuthenticated, setUserRole, setAuthLoading, setUserData } = useContext(AuthDataContext)
   const navigate = useNavigate()
   console.log("user set from context..", user)

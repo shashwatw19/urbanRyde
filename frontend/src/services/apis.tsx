@@ -1,3 +1,5 @@
+
+
 const BASE_URL = import.meta.env.VITE_REACT_APP_BASE_URL_FORWARDED
 
 export const USER = {
@@ -11,7 +13,8 @@ export const CAPTAIN = {
     signup : BASE_URL + "/captain/registerCaptain",
     signin : BASE_URL + "/captain/captainLogin",
     logout : BASE_URL + "/captain/logoutCaptain",
-    checkAuth : BASE_URL + "/captain/checkAuth"
+    checkAuth : BASE_URL + "/captain/checkAuth",
+    
 }
 export const OTP = {
     create : BASE_URL + "/otp/create"
@@ -24,6 +27,7 @@ export const RIDE = {
     GET_FARE : BASE_URL + "/ride/get-fare" ,
     CREATE_RIDE : BASE_URL + "/ride/create",
     CONFIRM_RIDE : BASE_URL + "/ride/confirm-ride",
+    CANCEL_RIDE : BASE_URL + "/ride/cancel-ride",
     START_RIDE : BASE_URL + "/ride/start-ride",
     VERIFY_RIDE_USER : BASE_URL + "/ride/verify/user",
     VERIFY_RIDE_CAPTAIN : BASE_URL + "/ride/verify/captain",

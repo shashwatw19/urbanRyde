@@ -1,12 +1,10 @@
 import { VehicleTypes } from "../components/VehicleCard";
 import car from "../assets/car.webp";
-import auto from "../assets/auto.webp";
-import bike from "../assets/bike.webp";
 import { FaMoneyCheck, FaStar } from "react-icons/fa";
 import { FaLocationPinLock } from "react-icons/fa6";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, } from "react-router-dom";
 import { RideContext } from "../context/RideContext";
-import { FormEvent, useContext, useEffect } from "react";
+import { FormEvent, useContext, } from "react";
 import { toast } from "sonner";
 import LiveTracking from "../components/LiveTracking";
 import { loadScript } from "../services/operations/payments/loadScript";
@@ -15,7 +13,8 @@ import { UserDataContext } from "../context/UserContext";
 import { verifyPayment } from "../services/operations/payments/verifyPayment";
 import { sendRideEndedMail } from "../services/operations/payments/sendRideEndedMail";
 import { AuthDataContext } from "../context/AuthContext";
-import { SocketContext } from "../context/socketContext";
+import { TripType } from "./HomeUser";
+import { clearRideId } from "../utils/ridePersistence";
 declare const window: any;
 const vehicle: VehicleTypes = {
   name: "UberGo",
@@ -24,70 +23,34 @@ const vehicle: VehicleTypes = {
   tags: ["affordable", "City Rides", "Economy"],
 };
 
-const UserRideCompleted = () => {
-  const { ride, isValidRide, loading, error, clearError } =
-    useContext(RideContext);
-  const { setLoading } = useContext(UserDataContext);
-  const { socket } = useContext(SocketContext);
-  const { userData } = useContext(AuthDataContext);
-  const { rideId } = useParams<{ rideId?: string }>();
-  const hasValidRideId = rideId && rideId.trim().length > 0;
-  const navigate = useNavigate();
-  const getVehicleImage = (vehicle: VehicleTypes) => {
-    switch (vehicle.type) {
-      case "car":
-        return car;
-      case "auto":
-        return auto;
-      case "moto":
-        return bike;
-      default:
-        return car;
-    }
-  };
-  const handleVerifyRide = async () => {
-    if (rideId) await isValidRide(rideId, "user");
-  };
-  useEffect(() => {
-    handleVerifyRide();
-  }, [rideId]);
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-      clearError();
-    }
-  }, [error, clearError]);
+interface UserRideCompletedProps {
+  setPaymentRequest: (value: boolean) => void;
+  setRideStarted : (valie : boolean)=>void
+  setWaitingForDriver : (valie : boolean)=>void
+  setLookingForDriver : (valie : boolean)=>void
+  setTrip : ({pickup , destination} : TripType)=>void
+}
 
-  const handlePaymentConfirmation = (status: "success" | "failed") => {
-    if (socket && userData && ride) {
-      status == "success"
-        ? socket.emit("payment-completed", {
-            rideid: rideId,
-            user: userData,
-            fare: ride.fare,
-          })
-        : socket.emit("payment-failed", {
-            rideid: rideId,
-            user: userData,
-            fare: ride.fare,
-          });
-    } else {
-      throw new Error("Socket connection not available to sent confirmation");
-    }
-  };
+const UserRideCompleted = ({ setPaymentRequest  , setRideStarted , setWaitingForDriver , setLookingForDriver , setTrip}: UserRideCompletedProps) => {
+  
+  const { ride, loading , clearRide} = useContext(RideContext);
+  const { setLoading } = useContext(UserDataContext);
+  const { userData } = useContext(AuthDataContext);
+  const navigate = useNavigate();
+
+  
   // payment integration starts from here......
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     try {
-     
       const rzpScript = await loadScript("https://checkout.razorpay.com/v1/checkout.js")
 			if (!rzpScript) {
 				toast.error("Razorpay SDK failed to load. Check your Internet Connection.")
 				return;
 			}
       if (ride) {
-        const paymentResponse = await capturePayment(ride._id, ride.fare! , setLoading);
+        const paymentResponse = await capturePayment(ride?._id!, ride.fare! , setLoading);
         console.log("paymentResponse from rzp", paymentResponse);
         const options = {
           key: import.meta.env.VITE_RAZORPAY_ID,
@@ -101,19 +64,26 @@ const UserRideCompleted = () => {
             name: userData?.fullname.firstname,
             email: userData?.email,
           },
-          handler: function (response: any) {
+          handler: async function (response: any) {
             console.log("response credentials from frontend " ,response.razorpay_order_id, 
               response.razorpay_payment_id,
               response.razorpay_signature,)
-            verifyPayment(
+            await verifyPayment(
               response.razorpay_order_id,
               response.razorpay_payment_id,
               response.razorpay_signature,
-              ride._id,
+              ride?._id!,
               ride.captain?._id!,
               navigate,
             );
-            sendRideEndedMail(ride?.user?.email! , ride.user?.fullname.firstname! , ride.captain?.fullname.firstname! , ride.captain?.vehicle.vehicleType! , ride.duration , ride.distance , ride.fare! , ride.pickup , ride.destination);
+            clearModalStates()
+            setTrip({
+              pickup : "",
+              destination : ""
+            })
+            clearRideId()
+            await sendRideEndedMail(ride?.user?.email! , ride.user?.fullname.firstname! , ride.captain?.fullname.firstname! , ride.captain?.vehicle.vehicleType! , ride.duration! , ride.distance! , ride.fare! , ride.pickup! , ride.destination!);
+            clearRide()
           },
           theme: {
             color: "#1a1a1a",
@@ -143,25 +113,17 @@ const UserRideCompleted = () => {
       </div>
     );
   }
+  const clearModalStates = () => {
+  setLookingForDriver(false);
+  setWaitingForDriver(false);
+  setRideStarted(false);
+  setPaymentRequest(false);
+  localStorage.removeItem("lookingForDriver");
+  localStorage.removeItem("waitingForDriver");
+  localStorage.removeItem("rideStarted");
+  localStorage.removeItem("paymentRequest");
+};
 
-  if (!hasValidRideId) {
-    return (
-      <div className="h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">
-            No Active Payments Requests
-          </h2>
-          <p className="text-gray-600 mb-4">You don't have any ongoing rides</p>
-          <button
-            onClick={() => navigate("/user/home")}
-            className="bg-black text-white px-6 py-2 rounded-lg font-medium"
-          >
-            Book a Ride
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="h-screen flex flex-col max-w-md mx-auto overflow-hidden bg-gray-50">

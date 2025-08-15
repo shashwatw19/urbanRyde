@@ -1,46 +1,57 @@
 import { FaSortDown, FaMapMarkerAlt } from 'react-icons/fa'
-import { VehicleTypes } from './VehicleCard'
+
 import { FaLocationDot } from "react-icons/fa6"
 import { FaLocationPinLock } from 'react-icons/fa6'
 import { FaMoneyCheck } from 'react-icons/fa6'
-import { useState } from 'react'
+import { toast } from 'sonner'
 import car from "../assets/car.webp"
 import bike from "../assets/bike.webp"
 import auto from "../assets/auto.webp"
-import { fareType } from '../pages/HomeUser'
-import { TripType } from '../pages/HomeUser'
+import { clearRideId , clearRideData } from '../utils/ridePersistence'
+import { cancelRide } from '../services/operations/ride/tripSetup'
+import { useContext } from 'react'
+import { RideContext } from '../context/RideContext'
 
 type LookingForDriverType = {
-    vehicle : VehicleTypes,
-    setVehicle : (value : VehicleTypes)=>void
+    
+   
     setWaitingForDriver : (value : boolean)=>void
     setLookingForDriver : (value : boolean)=>void,
     setConfirmRidePanel : (value : boolean)=>void
-    fare : fareType,
-    trip : TripType
+    setVehiclePanel : (valie : boolean)=>void
+    setRideId : (value : string )=>void,
+    rideId : string | null
 
 }
 
-const LookingForDriver = ({vehicle , setVehicle , setWaitingForDriver, setLookingForDriver ,setConfirmRidePanel, trip , fare } : LookingForDriverType) => {
+const LookingForDriver = ({ setLookingForDriver ,setConfirmRidePanel,  setRideId , rideId  , setVehiclePanel} : LookingForDriverType) => {
    
-    const [dots, setDots] = useState('')
+    const {ride} = useContext(RideContext)
    
     const getVehicleImage = () => {
-        switch(vehicle.type) {
+        switch(ride?.vehicleType) {
             case 'car': return car;
             case 'auto': return auto;
             case 'moto': return bike;
             default: return car;
         }
     }
-   
+    const getVehicleName = (name : string)=>{
+        switch(name){
+            case 'car' : return 'UrbanGo';
+            case 'auto' : return 'Auto';
+            case 'moto' : return 'Moto';
+            default : return 'vehicle'
+        }
+    }
+    const vehicleName = getVehicleName(ride?.vehicleType!)
     return (
         <div className='px-6 pt-4 max-w-md mx-auto h-screen flex flex-col gap-2 overflow-y-auto'>
             {/* Header */}
             <div className='flex flex-row justify-between items-start'>
                 <div>
                     <h2 className='text-xl font-semibold text-black capitalize'>Looking for Driver</h2>
-                    <p className='text-sm text-gray-600 mt-1'>We're finding the best driver for you{dots}</p>
+                    <p className='text-sm text-gray-600 mt-1'>We're finding the best driver for you</p>
                 </div>
                 
                 <p className='text-2xl ' onClick={()=>setLookingForDriver(false)} ><FaSortDown/></p>
@@ -51,7 +62,7 @@ const LookingForDriver = ({vehicle , setVehicle , setWaitingForDriver, setLookin
                 <div className='flex justify-center '>
                     <img 
                         src={getVehicleImage()} 
-                        alt={vehicle.name}
+                        alt={ride?.vehicleType as string}
                         className="w-24 h-24 object-contain relative "
                     />
                 </div>
@@ -60,11 +71,12 @@ const LookingForDriver = ({vehicle , setVehicle , setWaitingForDriver, setLookin
             {/* Search Status */}
             <div className='text-center '>
                 
-                <p className='text-lg font-semibold text-black capitalize'>{vehicle.name}</p>
+                <p className='text-lg font-semibold text-black capitalize'>{vehicleName}</p>
+
                 <div className='text-gray-700 text-xs mb-2'>
-                    <span className='capitalize'>{vehicle.tags[0]}</span>
-                    <span className='ml-1 capitalize'>• {vehicle.tags[1]}</span>
-                    <span className='ml-1 capitalize'>• {vehicle.tags[2]}</span>
+                    <span className='capitalize'>Fast</span>
+                    <span className='ml-1 capitalize'>• Efficient</span>
+                    <span className='ml-1 capitalize'>• Economy</span>
                 </div>
             </div>
             </div>
@@ -73,7 +85,7 @@ const LookingForDriver = ({vehicle , setVehicle , setWaitingForDriver, setLookin
                 <div className='flex flex-row items-center gap-4 p-1 bg-gray-50 rounded-lg'>
                     <FaLocationDot className='text-black text-lg flex-shrink-0'/>
                     <div className='flex-1'>
-                        <p className='text-base font-semibold text-black'>{trip.pickup }</p>
+                        <p className='text-base font-semibold text-black'>{ride?.pickup }</p>
                         
                     </div>
                 </div>
@@ -81,14 +93,14 @@ const LookingForDriver = ({vehicle , setVehicle , setWaitingForDriver, setLookin
                 <div className='flex flex-row items-center gap-4 p-1 bg-gray-50 rounded-lg'>
                     <FaLocationPinLock className='text-black text-lg flex-shrink-0'/>
                     <div className='flex-1'>
-                        <p className='text-base font-semibold text-black'>{trip.destination}</p>
+                        <p className='text-base font-semibold text-black'>{ride?.destination}</p>
                     </div>
                 </div>
                 
                 <div className='flex flex-row items-center gap-4 p-1 bg-gray-50 rounded-lg'>
                     <FaMoneyCheck className='text-black text-lg flex-shrink-0'/>
                     <div className='flex-1'>
-                        <p className='text-lg font-bold text-green-600'>₹{fare[vehicle.type!]}</p>
+                        <p className='text-lg font-bold text-green-600'>₹{ride?.fare}</p>
                         <p className='text-sm text-gray-700'>Cash | UPI | Wallet</p>
                     </div>
                 </div>
@@ -114,9 +126,20 @@ const LookingForDriver = ({vehicle , setVehicle , setWaitingForDriver, setLookin
                     <span className='capitalize animate-pulse'>Looking for driver</span>
                 </button>
                 <button 
-                    onClick={() => {
-                        setLookingForDriver(false)
-                        setConfirmRidePanel(true)
+                    onClick={async() => {
+                        const response = await cancelRide(rideId);
+                        if(response.success){
+                            toast.success('Ride has been cancelled successfully')
+                            setRideId("")
+                            setLookingForDriver(false)
+                            setConfirmRidePanel(false)
+                            setVehiclePanel(false)
+                            clearRideId()
+                            clearRideData()
+                        }else{
+                            toast.error("Not able to cancel ride.Try again")
+                            return;
+                        }
                     }}
                     className='w-full  bg-red-600 text-white py-2 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center gap-2'
                 >

@@ -1,59 +1,62 @@
 import { FaRoad, FaMoneyCheck } from "react-icons/fa"
 import { FaLocationDot, FaLocationPinLock } from "react-icons/fa6"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { FaSortDown } from "react-icons/fa"
-import { useContext, useEffect } from "react"
+import { useContext } from "react"
 import { RideContext } from "../context/RideContext"
 import { SocketContext } from "../context/socketContext"
-import { useState } from "react"
+
 import { toast } from "sonner"
 import { requestPayment } from "../services/operations/ride/tripSetup"
 import { UserDataContext } from "../context/UserContext"
 type RideCompleted = {
     setCompleteRide: (input: boolean) => void
-
+    setPaymentRequested : (input : boolean)=>void
+    setWaitingForPayment : (input : boolean)=>void
+    setRequestingPayment : (input : boolean)=>void
+    setPaymentCompleted : (input : boolean)=>void
+    setRidePopup :  (input : boolean)=>void
+    setConfirmRidePopup :  (input : boolean)=>void
+    setCaptainRiding :  (input : boolean)=>void
+    waitingForPayment : boolean
+    paymentCompleted : boolean
+    paymentRequest : boolean
+    requestingPayment : boolean
+   
 }
 
-const RideCompleted = ({ setCompleteRide }: RideCompleted) => {
-    const { ride, setRide } = useContext(RideContext)
+const RideCompleted = ({ setCompleteRide , setPaymentRequested  , setWaitingForPayment , setRequestingPayment , waitingForPayment , paymentCompleted , paymentRequest , 
+    requestingPayment , setPaymentCompleted , setRidePopup , setConfirmRidePopup , setCaptainRiding}: RideCompleted) => {
+    const { ride , setRide , clearRide } = useContext(RideContext)
     const { socket } = useContext(SocketContext)
     const { setLoading } = useContext(UserDataContext)
-    const [paymentRequest, setPaymentRequested] = useState<boolean>(false)
-    const [paymentCompleted, setPaymentCompleted] = useState<boolean>(false)
-    const [waitingForPayment, setWaitingForPayment] = useState<boolean>(false)
-    const [requestingPayment, setRequestingPayment] = useState<boolean>(false)
-    const {handleCaptainData} = useContext(UserDataContext)
-    useEffect(() => {
-        if (socket && ride?._id) {
-            socket.on('payment-completed', (data) => {
-                console.log('Payment completed received:', data);
-                if (data.rideId === ride._id) {
-                    setPaymentCompleted(true);
-                    setWaitingForPayment(false);
-                    setPaymentRequested(true);
-                    toast.success('Payment received! You can now finish the ride.');
-                    handleCaptainData(ride.fare! , 1 , ride?.distance)
-                }
-            });
-            socket.on('payment-failed', (data) => {
-                console.log("payment failed recieved", data)
-                if (data.rideId === ride._id) {
-                    setWaitingForPayment(false)
-                    toast.error('Payment failed or cancled')
-                }
-            })
+    const navigate = useNavigate()
+    
+    const clearCaptainModalStates = () => {
+        setRidePopup(false);
+        setConfirmRidePopup(false);
+        setCaptainRiding(false);
+        setCompleteRide(false);
+        setPaymentRequested(false);
+        setPaymentCompleted(false);
+        setWaitingForPayment(false);
+        setRequestingPayment(false);
 
-            return () => {
-                socket.off('payment-completed')
-                socket.off('payment-falied')
-            }
-        }
-    }, [socket, ride?._id])
+  localStorage.removeItem("captain_ridePopup");
+  localStorage.removeItem("captain_confirmRidePopup");
+  localStorage.removeItem("captain_captainRiding");
+  localStorage.removeItem("captain_completeRide");
+  localStorage.removeItem("captain_paymentRequest");
+  localStorage.removeItem("captain_paymentCompleted");
+  localStorage.removeItem("captain_waitingForPayment");
+  localStorage.removeItem("captain_requestingPayment");
+};
+   
     const handleRequestPayment = async () => {
         if (socket && ride?._id && ride.captain?._id && ride.user?._id) {
             setRequestingPayment(true)
             try {
-                const response = await requestPayment({ rideId: ride._id, userSocketId: ride.user.socketId, setLoading, setRide })
+                const response = await requestPayment({ rideId: ride._id, userSocketId: ride.user.socketId, setLoading })
                 if (response) {
                     setPaymentRequested(true);
                     setWaitingForPayment(true);
@@ -113,6 +116,12 @@ const RideCompleted = ({ setCompleteRide }: RideCompleted) => {
             bgColor: 'bg-gray-50',
             borderColor: 'border-gray-200'
         };
+    }
+    const handleEndRide = ()=>{
+        setCompleteRide(false)
+        clearCaptainModalStates()
+        navigate('/captain/home')
+        clearRide()
     }
     const paymentStatus = getPaymentStatus()
     return (
@@ -223,7 +232,9 @@ const RideCompleted = ({ setCompleteRide }: RideCompleted) => {
                         <div className="flex items-center justify-between gap-2 w-full">
                             {paymentCompleted ? (
                                 <Link className="w-full" to={"/captain/home"}>
-                                    <button className="w-full bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg font-semibold text-base transition-colors duration-200">
+                                    <button onClick={()=>{
+                                       handleEndRide()
+                                    }} className="w-full bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg font-semibold text-base transition-colors duration-200">
                                         Finish Ride ✅
                                     </button>
                                 </Link>

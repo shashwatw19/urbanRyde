@@ -1,6 +1,6 @@
 import jwt, { JwtHeader, JwtPayload } from 'jsonwebtoken'
 import { ApiError } from '../utils/ApiError'
-import { asyncHandler } from '../utils/AsyncHandler'
+import { asyncHandler } from '../utils/asyncHandler';
 import { Request , Response , NextFunction } from 'express';
 import { BlackListedToken } from '../models/blackListedToken.model';
 import dotenv from 'dotenv'
