@@ -9,6 +9,7 @@ import { AuthDataContext } from '../context/AuthContext';
 import { saveModalState } from '../utils/modalState';
 import { clearRideId } from '../utils/ridePersistence';
 import { clearRideData } from '../utils/ridePersistence';
+import { clearCaptainStats } from '../utils/captainStatsPersistence';
 interface HamburgerMenuProps {
   isAuthenticated?: boolean;
   userRole?: 'user' | 'captain' | null,
@@ -82,6 +83,7 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({
         saveModalState("captain_waitingForPayment",false )
         saveModalState("captain_requestingPayment", false)
         clearRideData()
+        clearCaptainStats()
       }
       else if(response && userRole === 'user'){
         toast.success('logged out!');

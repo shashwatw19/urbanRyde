@@ -20,7 +20,7 @@ const HeroSection = () => {
             <p className="font-extrabold text-white text-5xl md:text-8xl p-4">UrbanRyde</p>
             <p className="text-white text-xl md:text-2xl px-5 font-medium">Ride. Arrive. Repeat.</p>
           </div>
-          <HamburgerMenu isAuthenticated={isAuthenticated} userRole={userRole} userData = {userData}/>
+          <HamburgerMenu isAuthenticated={isAuthenticated} userRole={userRole} userData={userData}/>
         </div>
         
         <div className="bg-white py-6 px-4 w-full flex gap-4 flex-col relative z-10">

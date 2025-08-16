@@ -447,13 +447,14 @@ const handleRidePayment = ()=>{
   useEffect(() => { saveRideId(rideId); }, [rideId])
 
   return (
-    <div className="overflow-hidden"> 
-      <div className="h-screen w-full"> 
-        <LiveTracking/>
-      <p className="absolute top-3 left-3 px-2 py-1 text-lg font-bold uppercase text-gray-800 bg-white rounded-lg backdrop-blur-sm"> 
-          UrbanRyde
-        </p>
-      </div>
+    <div className="max-w-md mx-auto w-full relative">
+      <div className="h-screen flex flex-col mx-auto bg-gray-100"> 
+      <div className="h-[70%] w-full relative ">
+            <LiveTracking/>
+            <p className="absolute top-2 flex items-center  p-3 text-2xl font-bold  text-gray-800 rounded-xl pointer-events-none">
+              UrbanRyde
+            </p>
+        </div>
 
       <div className="h-screen flex flex-col justify-end absolute top-0 w-full">
         {/* search input feilds */}
@@ -570,6 +571,7 @@ const handleRidePayment = ()=>{
           setRideStarted = {setRideStarted} setTrip={setTrip}/> 
         </div>
       </div>
+    </div>
     </div>
   );
 };

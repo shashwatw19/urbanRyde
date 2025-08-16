@@ -4,6 +4,13 @@ import { Captain, SignUpCaptain } from "../types/captainTypes";
 import { UserSignUpType } from "../types/userTypes";
 import { useRef } from "react";
 import { useEffect } from "react";
+import {
+  saveAmount, getAmount,
+  saveTrip, getTrip,
+  saveDistanceTravelled, getDistanceTravelled,
+  saveSessionStartTime, getSessionStartTime,
+  
+} from "../utils/captainStatsPersistence";
 
 type UserContextProps = {
   children: ReactNode;
@@ -32,6 +39,8 @@ export const UserDataContext = createContext<UserContextTpye>(
 );
 
 const UserContext = ({ children }: UserContextProps) => {
+  const [loading  , setLoading] = useState<boolean>(false)
+  
   const [user, setUser] = useState<User | Captain>({
     _id: "",
     email: "",
@@ -63,14 +72,20 @@ const UserContext = ({ children }: UserContextProps) => {
       vehicleType: null,
     },
   });
-  const [amount, setAmount] = useState<number>(0);
-  const [trip, setTrip] = useState<number>(0);
-  const [distanceTravelled, setDistanceTravelled] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [amount, setAmount] = useState<number>(() => getAmount());
+  useEffect(() => { saveAmount(amount); }, [amount]);
+
+  const [trip, setTrip] = useState<number>(() => getTrip());
+  useEffect(() => { saveTrip(trip); }, [trip]);
+
+  const [distanceTravelled, setDistanceTravelled] = useState<number>(() => getDistanceTravelled());
+  useEffect(() => { saveDistanceTravelled(distanceTravelled); }, [distanceTravelled]);;
   
 
   const [sessionTime, setSessionTime] = useState<number>(0);
-  const sessionStartTime = useRef<number>(Date.now());
+  const sessionStartTime = useRef<number>(getSessionStartTime());
+  useEffect(() => { saveSessionStartTime(sessionStartTime.current); }, [sessionStartTime.current]);
+
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const handleCaptainData = (
@@ -82,25 +97,30 @@ const UserContext = ({ children }: UserContextProps) => {
     setAmount((prev) => prev + amount);
     setDistanceTravelled((prev) => prev + distanceTravelled);
   };
-
-  useEffect(() => {
+  
+useEffect(() => {
+  // Only set if not already present
+  if (!localStorage.getItem("captain_sessionStartTime")) {
     sessionStartTime.current = Date.now();
+    saveSessionStartTime(sessionStartTime.current);
+  } else {
+    sessionStartTime.current = getSessionStartTime();
+  }
 
-    intervalRef.current = setInterval(() => {
-      const currentTime = Date.now();
-      const timeSpent = Math.floor(
-        (currentTime - sessionStartTime.current) / 1000
-      );
-      setSessionTime(timeSpent);
-    }, 1000);
+  intervalRef.current = setInterval(() => {
+    const currentTime = Date.now();
+    const timeSpent = Math.floor(
+      (currentTime - sessionStartTime.current) / 1000
+    );
+    setSessionTime(timeSpent);
+  }, 1000);
 
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-
-  }, []);
+  return () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+  };
+}, []);
 
   const getFormattedSessionTime = (): string => {
     const hours = Math.floor(sessionTime / 3600);
