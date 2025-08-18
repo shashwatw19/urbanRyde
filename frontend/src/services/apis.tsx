@@ -1,6 +1,6 @@
 
 
-const BASE_URL = import.meta.env.VITE_REACT_APP_BASE_URL_FORWARDED
+const BASE_URL = import.meta.env.VITE_REACT_APP_BASE_URL + '/api/v1'
 
 export const USER = {
     signin  : BASE_URL +"/user/signin",

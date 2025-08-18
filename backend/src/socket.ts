@@ -15,7 +15,7 @@ let io: Server;
 const initiateServer = (server: HTTPServer) => {
     io = new Server(server, {
         cors: {
-            origin: ['http://localhost:5173', 'https://7k2mt4bg-5173.inc1.devtunnels.ms'],
+            origin: process.env.ORIGIN,
             methods: ["GET", "POST"],
             credentials: true
         }

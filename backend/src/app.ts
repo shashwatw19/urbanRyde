@@ -1,11 +1,14 @@
 import express, { Request, Response, NextFunction } from 'express'
 import cookieParser from 'cookie-parser'
 import cors from 'cors' 
+import dotenv from "dotenv"
+dotenv.config()
+
 const app = express();
 
 
 app.use(cors({
-    origin : ['http://localhost:5173','https://7k2mt4bg-5173.inc1.devtunnels.ms'],
+    origin : process.env.ORIGIN,
     credentials : true
 }))
 
@@ -17,12 +20,12 @@ app.use(cookieParser())
 
 
 // import routes starts from here
-import otpRoute from '../src/routes/otp.routes'
-import userRoutes from '../src/routes/user.routes'
-import captainRoutes from '../src/routes/captain.routes'
-import mapRoutes from "../src/routes/map.routes"
-import rideRoutes from "../src/routes/rides.routes"
-import paymentRoutes from "../src/routes/payment.routes"
+import otpRoute from './routes/otp.routes'
+import userRoutes from './routes/user.routes'
+import captainRoutes from './routes/captain.routes'
+import mapRoutes from "./routes/map.routes"
+import rideRoutes from "./routes/rides.routes"
+import paymentRoutes from "./routes/payment.routes"
 app.use('/api/v1/otp' , otpRoute)
 app.use('/api/v1/user' , userRoutes)
 app.use('/api/v1/captain' , captainRoutes)
