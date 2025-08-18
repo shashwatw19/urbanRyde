@@ -54,7 +54,7 @@ const LookingForDriver = ({ setLookingForDriver ,setConfirmRidePanel,  setRideId
                     <p className='text-sm text-gray-600 mt-1'>We're finding the best driver for you</p>
                 </div>
                 
-                <p className='text-2xl ' onClick={()=>setLookingForDriver(false)} ><FaSortDown/></p>
+                {/* <p className='text-2xl ' onClick={()=>setLookingForDriver(false)} ><FaSortDown/></p> */}
             </div>
 
             <div className='flex flex-col  justify-start'>

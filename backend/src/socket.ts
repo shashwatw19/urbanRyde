@@ -2,7 +2,8 @@ import { Server } from "socket.io";
 import { User } from "./models/user.model";
 import type { Server as HTTPServer } from "http";
 import { Captain } from "./models/captain.model";
-
+import dotenv from "dotenv"
+dotenv.config()
 
 type CaptianLocationType = {
     userId: string,

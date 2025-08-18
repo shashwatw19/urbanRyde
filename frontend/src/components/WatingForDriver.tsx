@@ -1,4 +1,4 @@
-import { FaSortDown,  FaStar,  } from 'react-icons/fa'
+import {   FaStar,  } from 'react-icons/fa'
 import { VehicleTypes } from './VehicleCard'
 import { FaLocationDot } from "react-icons/fa6"
 import { FaLocationPinLock } from 'react-icons/fa6'
@@ -14,7 +14,7 @@ type WaitingForDriverType = {
     setWaitingForDriver : (value : boolean)=>void
 }
 
-const WaitingForDriver = ({vehicle  , setWaitingForDriver } : WaitingForDriverType) => {
+const WaitingForDriver = ({vehicle } : WaitingForDriverType) => {
     //this is a hardCoded value
     const arrivalTime = 5
     const {ride} = useContext(RideContext)
@@ -29,12 +29,12 @@ const WaitingForDriver = ({vehicle  , setWaitingForDriver } : WaitingForDriverTy
                     <h2 className='text-lg font-semibold text-black capitalize'>Driver Assigned</h2>
                     <p className='text-xs text-gray-600'>Your driver is on the way</p>
                 </div>
-                <button 
+                {/* <button 
                     className='text-xl text-black cursor-pointer hover:text-gray-600 transition-colors'
                     onClick={() => setWaitingForDriver(false)}
                 >
                     <FaSortDown/>
-                </button>
+                </button> */}
             </div>
 
 
