@@ -12,10 +12,21 @@ import CaptainProtectedWrapper from "./pages/CaptainProtectedWrapper"
 
 import Home from "./pages/HomeUser"
 import HomeCaptain from "./pages/HomeCaptain"
-
+import { useEffect } from "react";
+import { clearCaptainStats } from "./utils/captainStatsPersistence"
 import NotFound from "./components/NotFound"
 function App() {
+  useEffect(() => {
+  const handleUnload = () => {
+    clearCaptainStats();
+  };
 
+  window.addEventListener("beforeunload", handleUnload);
+
+  return () => {
+    window.removeEventListener("beforeunload", handleUnload);
+  };
+}, []);
   return (
     <div>
    
