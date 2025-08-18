@@ -17,7 +17,7 @@ type RidePopUPType = {
 const RidePopUP = ({setRidePopup , setConfirmRidePopup }:RidePopUPType) => {
   const {loading , setLoading} = useContext(UserDataContext)
   const {ride , setRide} = useContext(RideContext)
-  const handeleAcceptRide = async(e : React.MouseEvent<HTMLButtonElement>)=>{
+  const handeleAcceptRide = async()=>{
       try{
         const data = {
           rideId : ride?._id!,
@@ -83,7 +83,7 @@ const RidePopUP = ({setRidePopup , setConfirmRidePopup }:RidePopUPType) => {
          <button disabled={loading} onClick={()=>{setRidePopup(false) ; setRide(null)}} className="w-full bg-gray-500 text-white py-2 rounded-lg  font-semibold">
             Ignore
         </button>
-        <button disabled={loading} onClick={(e)=>handeleAcceptRide(e)} className="w-full bg-green-600 text-white py-2 rounded-lg  font-semibold">
+        <button disabled={loading} onClick={()=>handeleAcceptRide()} className="w-full bg-green-600 text-white py-2 rounded-lg  font-semibold">
             Accept 
       </button>
      

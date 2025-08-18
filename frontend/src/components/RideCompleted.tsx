@@ -27,7 +27,7 @@ type RideCompleted = {
 
 const RideCompleted = ({ setCompleteRide , setPaymentRequested  , setWaitingForPayment , setRequestingPayment , waitingForPayment , paymentCompleted , paymentRequest , 
     requestingPayment , setPaymentCompleted , setRidePopup , setConfirmRidePopup , setCaptainRiding}: RideCompleted) => {
-    const { ride , setRide , clearRide } = useContext(RideContext)
+    const { ride  , clearRide } = useContext(RideContext)
     const { socket } = useContext(SocketContext)
     const { setLoading } = useContext(UserDataContext)
     const navigate = useNavigate()

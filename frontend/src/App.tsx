@@ -9,42 +9,13 @@ import VerifyEmailCaptain from "./pages/VerifyEmailCaptain"
 
 import { UserProtectedWrapper } from "./pages/UserProtectedWrapper"
 import CaptainProtectedWrapper from "./pages/CaptainProtectedWrapper"
- import { useEffect } from "react";
-import { clearCaptainStats } from "./utils/captainStatsPersistence"
+
 import Home from "./pages/HomeUser"
 import HomeCaptain from "./pages/HomeCaptain"
 
 import NotFound from "./components/NotFound"
 function App() {
 
-
-
-  useEffect(() => {
-    const handleUnload = () => {
-      // Check if a ride is active
-      const ride = localStorage.getItem("currentRide");
-      let isRideActive = false;
-      if (ride) {
-        try {
-          const rideObj = JSON.parse(ride);
-          // You can adjust this check based on your RideType/status logic
-          isRideActive = rideObj && rideObj.status && rideObj.status !== "completed" && rideObj.status !== "cancelled";
-        } catch (e) {
-          // If parsing fails, assume no active ride
-          isRideActive = false;
-        }
-      }
-      if (!isRideActive) {
-        clearCaptainStats();
-      }
-    };
-
-    window.addEventListener("beforeunload", handleUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleUnload);
-    };
-  }, []);
   return (
     <div>
    
