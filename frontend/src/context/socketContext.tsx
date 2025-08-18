@@ -29,8 +29,6 @@ const SocketProvider = ({ children } : SocketProviderType) => {
         };
     }, []);
 
-
-
     return (
         <SocketContext.Provider value={{ socket }}>
             {children}

@@ -6,7 +6,7 @@ import { Response , Request } from "express";
 import { validationResult , Result, cookie } from "express-validator";
 import { Otp } from "../models/otp.model";
 import { BlackListedToken } from "../models/blackListedToken.model";
-
+import { CookieOptions } from "express";
 // register captain
 const registerCaptain = asyncHandler(async(req : Request , res : Response )=>{
     const errors :Result = validationResult(req);
@@ -53,10 +53,11 @@ const registerCaptain = asyncHandler(async(req : Request , res : Response )=>{
     }
     const accessToken = newUser.generateAccessToken();
 
-    const payload = {
+    const payload : CookieOptions = {
         secure : true,
         httpOnly : true,
-        maxAge : 1 * 24 * 60 * 60 * 1000
+        maxAge : 1 * 24 * 60 * 60 * 1000,
+        sameSite: 'none'  // 2 days in milliseconds
     }
     newUser.password = undefined
     
@@ -90,12 +91,13 @@ const loginCaptain = asyncHandler(async(req : Request , res : Response)=>{
     await validUser.save({validateBeforeSave : false})
     
     const accessToken = validUser.generateAccessToken()
-    const options = {
+    const options : CookieOptions = {
         secure : true,
         httpOnly : true,
-        maxAge : 2 * 24 * 60 * 60 * 1000 
+        maxAge : 2 * 24 * 60 * 60 * 1000, 
+        sameSite : 'none'
     }
-    validUser
+    
     return res.status(200).cookie("accessToken" , accessToken, options).json(
         new ApiResponse(200 , 'User logged in successfully!' , validUser)
     )
@@ -120,8 +122,15 @@ const logout = asyncHandler(async(req : Request , res : Response)=>{
     await BlackListedToken.create({
         token : accessToken
     })
+
+    const options : CookieOptions= {
+        secure : true,
+        httpOnly : true,
+        maxAge :  2 * 24 * 60 * 60 * 1000,
+        sameSite: 'none'  // 2 days in milliseconds
     
-    return res.status(200).clearCookie("accessToken").json(
+    }
+    return res.status(200).clearCookie("accessToken" , options).json(
         new ApiResponse(200 , 'user logged out successfully' , {} , true)
     )
 })

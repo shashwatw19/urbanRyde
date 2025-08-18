@@ -108,8 +108,14 @@ const logout = asyncHandler(async(req : Request,res : Response)=>{
     await BlackListedToken.create({
         token : accessToken
     }) 
-    
-    return res.status(200).clearCookie('accessToken').json(
+    const options : CookieOptions= {
+        secure : true,
+        httpOnly : true,
+        maxAge :  2 * 24 * 60 * 60 * 1000,
+        sameSite: 'none'  // 2 days in milliseconds
+        
+    }
+    return res.status(200).clearCookie('accessToken' , options).json(
         new ApiResponse(200 , 'User logged Out Successfully' , {} , true )
     )
 })
