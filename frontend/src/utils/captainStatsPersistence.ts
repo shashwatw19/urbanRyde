@@ -34,7 +34,6 @@ export const getSessionStartTime = (): number => {
   return stored ? Number(stored) : Date.now();
 };
 
-
 export const clearCaptainStats = () => {
   localStorage.removeItem("captain_amount");
   localStorage.removeItem("captain_trip");

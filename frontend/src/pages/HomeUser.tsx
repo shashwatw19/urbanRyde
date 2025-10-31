@@ -516,7 +516,7 @@ const handleRidePayment = ()=>{
         </div>
 
         {/* vehicle selection  */}
-        <div ref={vehiclePanelRef} className="fixed max-w-md mx-auto bg-white bottom-0  translate-y-full z-10 ">
+        <div ref={vehiclePanelRef} className="fixed w-full max-w-md mx-auto bg-white bottom-0  translate-y-full z-10 ">
           <VehicleSelection 
             fare={fare} 
             setVehiclePanel={setVehiclePanel} 
@@ -526,7 +526,7 @@ const handleRidePayment = ()=>{
         </div>
 
         {/* confirm ride  */}
-        <div ref={confirmRideRef} className="fixed max-w-md mx-auto bottom-0 translate-y-full z-10 bg-white">
+        <div ref={confirmRideRef} className="fixed w-full max-w-md mx-auto bottom-0 translate-y-full z-10 bg-white">
           <ConfirmRide 
            setVehiclePanel={setVehiclePanel} 
             fare={fare} 
@@ -539,7 +539,7 @@ const handleRidePayment = ()=>{
         </div>
 
         {/* looking for driver  */}
-        <div ref={lookingForDriverRef} className="fixed max-w-md mx-auto bottom-0 translate-y-full bg-white">
+        <div ref={lookingForDriverRef} className="fixed w-full max-w-md mx-auto bottom-0 translate-y-full bg-white">
           <LookingForDriver 
             setVehiclePanel={setVehiclePanel} 
             setLookingForDriver={setLookingForDriver} 
@@ -551,7 +551,7 @@ const handleRidePayment = ()=>{
         </div>
 
         {/* wating for driver  */}
-        <div ref={watingforDriverRef} className="fixed max-w-md mx-auto bottom-0 translate-y-full bg-white">
+        <div ref={watingforDriverRef} className="fixed w-full max-w-md mx-auto bottom-0 translate-y-full bg-white">
           <WatingForDriver 
             vehicle={vehicle} 
             setVehicle={setVehicle} 
@@ -560,12 +560,12 @@ const handleRidePayment = ()=>{
         </div>
 
         {/* ongoing ride  */}
-        <div ref={rideStartedRef} className="fixed max-w-md mx-auto bottom-0 translate-y-full bg-white">
+        <div ref={rideStartedRef} className="fixed w-full max-w-md mx-auto bottom-0 translate-y-full bg-white">
           <UserOngoingRide/>
         </div>
 
         {/* payment section */}
-        <div ref={paymentRequestRef} className="fixed max-w-md mx-auto bottom-0 translate-y-full bg-white">
+        <div ref={paymentRequestRef} className="fixed w-full max-w-md mx-auto bottom-0 translate-y-full bg-white">
           <UserRideCompleted setPaymentRequest={setPaymentRequest} setLookingForDriver = {setLookingForDriver}
           setWaitingForDriver = {setWaitingForDriver}
           setRideStarted = {setRideStarted} setTrip={setTrip}/> 

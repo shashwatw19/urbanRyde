@@ -7,9 +7,9 @@ import { createOtp } from "../services/operations/user/auth";
 import { UserDataContext } from "../context/UserContext";
 import moto from '../assets/bike.webp'
 import car from "../assets/car.webp"
-
+import VerifyEmailCaptain from "./VerifyEmailCaptain";
 import auto from "../assets/auto.webp"
-import VerifyEmail from "./VerifyEmail";
+
 const CaptainSignup = () => {
 
   const [input, setInput] = useState<CaptainSignUpSchema>({
@@ -74,7 +74,7 @@ const CaptainSignup = () => {
   };
 
   if(showVerifyEmail){
-    return <VerifyEmail></VerifyEmail>
+    return <VerifyEmailCaptain></VerifyEmailCaptain>
   }
   return (
     <div className="p-7 flex flex-col justify-between gap-10 items-start min-h-screen">

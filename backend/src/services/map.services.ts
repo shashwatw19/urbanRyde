@@ -55,7 +55,7 @@ const getDistanceTime = async(origin : string , destination : string)=>{
                 throw new Error('No routes found');
             }
 
-            return response.data.rows[ 0 ].elements[ 0 ];
+            return response.data.rows[0].elements[0];
         } else {
             throw new Error('Unable to fetch distance and time');
         }
